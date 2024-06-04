@@ -3,7 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-// import usersRouter from "./routes/usersRouter.js";
+import usersRouter from "./routes/usersRouter.js";
 import './config/config-passport.js';
 
 dotenv.config();
@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// app.use("/api/users", usersRouter);
+app.use("/api/users", usersRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
