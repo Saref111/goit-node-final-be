@@ -19,7 +19,15 @@ export const User = new mongoose.Schema(
       type: String,
       default: null,
     },
-    avatarURL: String,
+    avatar: String,
+    followers: {
+      type: Array,
+      default: [],
+    },
+    following: {
+      type: Array,
+      default: [],
+    },
   },
   { versionKey: false }
 );
