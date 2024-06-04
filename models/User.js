@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import hooks from "./hooks.js";
 
-export const User = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -31,3 +32,12 @@ export const User = new mongoose.Schema(
   },
   { versionKey: false }
 );
+
+
+userSchema.post("save", hooks.handleSaveError);
+userSchema.pre("findOneAndUpdate", hooks.setUpdateSettings);
+userSchema.post("findOneAndUpdate", hooks.handleSaveError);
+
+const User = mongoose.model("user", userSchema);
+
+export default User;
