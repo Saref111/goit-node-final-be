@@ -8,15 +8,17 @@ import {
 } from "../services/recipesService.js";
 
 const getPopular = async (req, res) => {
-  const popular = await getRecipes();
-  popular.sort((a, b) => b.favorite.length - a.favorite.length);
+  const { page = 2, limit = 5 } = req.query;
+  const skip = (page - 1) * limit;
+  const popular = await getRecipes(skip, limit);
   res.json(popular);
 };
 
 const getFavorite = async (req, res) => {
   const { _id: userId } = req.user;
-  const result = await getRecipes();
-  const favorites = result.filter((item) => item.favorite.includes(userId));
+  const { page = 1, limit = 5 } = req.query;
+  const skip = (page - 1) * limit;
+  const favorites = await getRecipes(skip, limit, userId);
   res.json(favorites);
 };
 

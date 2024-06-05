@@ -1,11 +1,33 @@
 import Recipe from "../models/Recipe.js";
 
-export const getRecipes = () => Recipe.find();
-
-// export const getRecipes = async (search = {}) => {
-//   const { filter = {}, fields = "", settings = "" } = search;
-//   return Recipe.find({ filter, fields, settings });
-// };
+export const getRecipes = (skip, limit, filterId) => {
+  const matchStage = filterId ? { favorite: filterId } : {};
+  return Recipe.aggregate([
+    {
+      $match: matchStage,
+    },
+    {
+      $addFields: {
+        favoriteLength: {
+          $cond: {
+            if: { $isArray: "$favorite" },
+            then: { $size: "$favorite" },
+            else: 0,
+          },
+        },
+      },
+    },
+    {
+      $sort: { favoriteLength: -1 },
+    },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
+  ]);
+};
 
 export const getRecipe = (filter) => Recipe.findOne(filter);
 
