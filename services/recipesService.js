@@ -29,7 +29,7 @@ export const getRecipes = (skip, limit, filterId) => {
   ]);
 };
 
-export const getRecipe = (filter) => Recipe.findOne(filter);
+export const getRecipeById = (filter) => Recipe.findOne(filter);
 
 export const updateFavorites = (filter, data) =>
   Recipe.findOneAndUpdate(filter, data);

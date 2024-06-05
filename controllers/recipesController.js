@@ -3,12 +3,12 @@ import HttpError from "../helpers/HttpError.js";
 
 import {
   getRecipes,
-  getRecipe,
+  getRecipeById,
   updateFavorites,
 } from "../services/recipesService.js";
 
 const getPopular = async (req, res) => {
-  const { page = 2, limit = 5 } = req.query;
+  const { page = 1, limit = 5 } = req.query;
   const skip = (page - 1) * limit;
   const popular = await getRecipes(skip, limit);
   res.json(popular);
@@ -25,9 +25,9 @@ const getFavorite = async (req, res) => {
 const addToFavorite = async (req, res) => {
   const { _id: userId } = req.user;
   const { id: _id } = req.params;
-  const recipe = await getRecipe({ _id });
+  const recipe = await getRecipeById({ _id });
   if (!recipe) {
-    throw HttpError(404, `Recipe with ${_id} not found`);
+    throw HttpError(404, `Recipe with id: ${_id} not found`);
   }
   const { favorite } = recipe;
   if (favorite.includes(userId)) {
@@ -41,9 +41,9 @@ const addToFavorite = async (req, res) => {
 const deleteFromFavorite = async (req, res) => {
   const { _id: userId } = req.user;
   const { id: _id } = req.params;
-  const recipe = await getRecipe({ _id });
+  const recipe = await getRecipeById({ _id });
   if (!recipe) {
-    throw HttpError(404, `Recipe with ${_id} not found`);
+    throw HttpError(404, `Recipe with id: ${_id} not found`);
   }
   const { favorite } = recipe;
   favorite.pop(userId);
