@@ -13,12 +13,12 @@ const getAllAreas = async(req, res) => {
 
     const total = await Areas.countDocuments({});
     const areas = await getAreas({filter: {}, fields: "", settings});
-    console.log(areas.length);
     res.status(200).json({
         results: areas,
         total
     })
 }
+
 const getOneArea = async(req, res) => {
 const {id} = req.params;
 const filter = {_id: id};
@@ -31,7 +31,6 @@ res.status(200).json({
     results
 })
 }
-
 
 export default {
     getAllAreas: ctrlWrapper(getAllAreas),
