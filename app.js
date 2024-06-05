@@ -4,7 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import usersRouter from "./routes/usersRouter.js";
-import './config/passport-config.js';
+import "./config/passport-config.js";
+import testimonialsRouter from "./routes/testimonialsRouter.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/api/users", usersRouter);
+app.use("/api/testimonials", testimonialsRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
