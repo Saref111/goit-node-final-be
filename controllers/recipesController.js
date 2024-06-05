@@ -1,4 +1,5 @@
 import ctrlWrapper from "../decorators/ctrlWrappe.js";
+import HttpError from "../helpers/HttpError.js";
 
 import {
   getRecipes,
@@ -13,9 +14,9 @@ const getPopular = async (req, res) => {
 };
 
 const getFavorite = async (req, res) => {
-  const { _id } = req.user;
+  const { _id: userId } = req.user;
   const result = await getRecipes();
-  const favorites = result.filter((item) => item.favorite.includes(_id));
+  const favorites = result.filter((item) => item.favorite.includes(userId));
   res.json(favorites);
 };
 
@@ -23,7 +24,13 @@ const addToFavorite = async (req, res) => {
   const { _id: userId } = req.user;
   const { id: _id } = req.params;
   const recipe = await getRecipe({ _id });
+  if (!recipe) {
+    throw HttpError(404, `Recipe with ${_id} not found`);
+  }
   const { favorite } = recipe;
+  if (favorite.includes(userId)) {
+    throw HttpError(409, `Recipe already in favorites`);
+  }
   favorite.push(userId);
   const result = await updateFavorites({ _id }, recipe);
   res.json(result);
@@ -33,6 +40,9 @@ const deleteFromFavorite = async (req, res) => {
   const { _id: userId } = req.user;
   const { id: _id } = req.params;
   const recipe = await getRecipe({ _id });
+  if (!recipe) {
+    throw HttpError(404, `Recipe with ${_id} not found`);
+  }
   const { favorite } = recipe;
   favorite.pop(userId);
   const result = await updateFavorites({ _id }, recipe);

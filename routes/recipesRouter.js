@@ -1,20 +1,17 @@
 import { Router } from "express";
-import {
-  getPopular,
-  addToFavorite,
-  deleteFromFavorite,
-  getFavorite,
-} from "../controllers/recipesController.js";
+import recipesControllers from "../controllers/recipesController.js";
 import { authenticateToken } from "../middlewares/authenticateToken.js";
 
 const recipesRouter = Router();
 
-recipesRouter.get("/popular", getPopular);
+recipesRouter.get("/popular", recipesControllers.getPopular);
 
-recipesRouter.get("/favorite", authenticateToken, getFavorite);
+recipesRouter.use(authenticateToken);
 
-recipesRouter.post("/favorite/:id", authenticateToken, addToFavorite);
+recipesRouter.get("/favorite", recipesControllers.getFavorite);
 
-recipesRouter.delete("/favorite/:id", authenticateToken, deleteFromFavorite);
+recipesRouter.post("/favorite/:id", recipesControllers.addToFavorite);
+
+recipesRouter.delete("/favorite/:id", recipesControllers.deleteFromFavorite);
 
 export default recipesRouter;
