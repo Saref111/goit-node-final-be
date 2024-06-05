@@ -18,7 +18,6 @@ const getAllAreas = async(req, res) => {
         total
     })
 }
-
 const getOneArea = async(req, res) => {
 const {id} = req.params;
 const filter = {_id: id};
