@@ -6,3 +6,5 @@ import { userRegistrationSchema } from "../schemas/userSchema.js";
 const usersRouter = Router();
 
 usersRouter.post("/register", validateBody(userRegistrationSchema), register);
+
+export default usersRouter;
