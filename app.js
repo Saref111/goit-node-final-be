@@ -5,7 +5,10 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import usersRouter from "./routes/usersRouter.js";
 import "./config/passport-config.js";
+<<<<<<< HEAD
 import recipesRouter from "./routes/recipesRouter.js";
+=======
+>>>>>>> 5f01658 (added recipes service)
 
 dotenv.config();
 
