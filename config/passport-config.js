@@ -1,6 +1,6 @@
 import passport from "passport";
 import passportJWT from "passport-jwt";
-import { userSchema } from "../schemas/usersSchemas.js";
+import User from "../models/User.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
