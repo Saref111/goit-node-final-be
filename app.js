@@ -4,7 +4,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import usersRouter from "./routes/usersRouter.js";
-import './config/passport-config.js';
+import './config/config-passport.js';
+import categoriesRouter from "./routes/categoriesRouter.js";
+import areasRouter from "./routes/areasRouter.js";
+import ingredientsRouter from "./routes/ingredientsRouter.js";
 
 dotenv.config();
 
@@ -20,6 +23,9 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/api/users", usersRouter);
+app.use("/api/categories", categoriesRouter);
+app.use("/api/areas", areasRouter);
+app.use("/api/ingredients", ingredientsRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
