@@ -1,8 +1,7 @@
 import passport from "passport";
 import passportJWT from "passport-jwt";
-import { userSchema } from "../schemas/usersSchemas.js";
+import User  from "../models/User.js";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -14,8 +13,6 @@ const params = {
   secretOrKey: secret,
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
 };
-
-const User = mongoose.model("User", userSchema);
 
 passport.use(
   new Strategy(params, async (payload, done) => {

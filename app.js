@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import usersRouter from "./routes/usersRouter.js";
-import './config/config-passport.js';
+import './config/passport-config.js';
 
 dotenv.config();
 
