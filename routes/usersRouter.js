@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateToken } from "../middlewares/index.js";
+import { authenticateToken, upload } from "../middlewares/index.js";
 // import {
 //   register,
 //   getAll,
@@ -23,6 +23,13 @@ usersRouter.post(
 );
 
 usersRouter.get("/", userController.getAll);
+
+usersRouter.patch(
+  "/avatars",
+  upload.single("avatar"),
+  authenticateToken,
+  userController.updateAvatar
+);
 
 usersRouter.get("/:id/followers", userController.getFollowersById);
 

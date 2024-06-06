@@ -20,7 +20,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    avatar: String,
+    avatar: {
+      type: String,
+      default: null,
+    },
+    avatar_preview: {
+      type: String,
+      default: null,
+    },
     followers: {
       type: Array,
       default: [],
@@ -32,7 +39,6 @@ const userSchema = new mongoose.Schema(
   },
   { versionKey: false }
 );
-
 
 userSchema.post("save", hooks.handleSaveError);
 userSchema.pre("findOneAndUpdate", hooks.setUpdateSettings);
