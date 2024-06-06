@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import ctrlWrapper from "../decorators/ctrlWrappe.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -59,6 +60,8 @@ export default {
   deleteFromFavorite: ctrlWrapper(deleteFromFavorite),
 };
 =======
+=======
+>>>>>>> abb3784f3d999bd604a4a68d5578b469cb6f91af
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 import { listRecipes } from "../services/recipesService.js";
@@ -80,4 +83,7 @@ const getRecipes = async (req, res) => {
 };
 
 export default { getRecipes: ctrlWrapper(getRecipes) };
+<<<<<<< HEAD
 >>>>>>> abb3784 (added ricipes controller, added recipes service,  added recipes route, added recipes router,  added validateQuery middleware, added validateQuerySchema, fixed mongoose schema,)
+=======
+>>>>>>> abb3784f3d999bd604a4a68d5578b469cb6f91af
