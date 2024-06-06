@@ -8,6 +8,7 @@ import './config/passport-config.js';
 import categoriesRouter from "./routes/categoriesRouter.js";
 import areasRouter from "./routes/areasRouter.js";
 import ingredientsRouter from "./routes/ingredientsRouter.js";
+import recipesRouter from "./routes/recipesRouter.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/areas", areasRouter);
 app.use("/api/ingredients", ingredientsRouter)
+app.use("/api/recipes", recipesRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
