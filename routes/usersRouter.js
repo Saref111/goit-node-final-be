@@ -1,20 +1,10 @@
 import { Router } from "express";
 import { authenticateToken, upload } from "../middlewares/index.js";
-// import {
-//   register,
-//   getAll,
-//   getFollowersById,
-//   getFollowings,
-//   addFollowing,
-// } from "../controllers/usersController.js";
-
 import userController from "../controllers/usersController.js";
 import validateBody from "../helpers/validateBody.js";
 import { userRegistrationSchema } from "../schemas/userSchema.js";
 
 const usersRouter = Router();
-
-// usersRouter.use(authenticateToken);
 
 usersRouter.post(
   "/register",
@@ -31,16 +21,24 @@ usersRouter.patch(
   userController.updateAvatar
 );
 
-usersRouter.get("/:id/followers", userController.getFollowersById);
+usersRouter.get(
+  "/:id/followers",
+  authenticateToken,
+  userController.getFollowersById
+);
 
-// змінити коли буде авторизований user -->
-// ----------------------------------------------------
-// usersRouter.get("/followings", userController.getFollowings);
-usersRouter.get("/:id/followings", userController.getFollowings);
-// ----------------------------------------------------
+usersRouter.get("/followings", authenticateToken, userController.getFollowings);
 
-usersRouter.patch("/addFollowing/:id", userController.addFollowing);
+usersRouter.patch(
+  "/addFollowing/:id",
+  authenticateToken,
+  userController.addFollowing
+);
 
-usersRouter.patch("/removeFollowing/:id", userController.removeFollowing);
+usersRouter.patch(
+  "/removeFollowing/:id",
+  authenticateToken,
+  userController.removeFollowing
+);
 
 export default usersRouter;
