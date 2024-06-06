@@ -31,5 +31,5 @@ export const getRecipes = (skip, limit, filterId) => {
 
 export const getRecipeById = (filter) => Recipe.findOne(filter);
 
-export const updateFavorites = (filter, data) =>
-  Recipe.findOneAndUpdate(filter, data);
+export const updateFavorites = (id, settings) =>
+  Recipe.findByIdAndUpdate(id, settings);

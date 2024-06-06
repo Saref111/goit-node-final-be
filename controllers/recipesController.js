@@ -33,8 +33,9 @@ const addToFavorite = async (req, res) => {
   if (favorite.includes(userId)) {
     throw HttpError(409, `Recipe already in favorites`);
   }
-  favorite.push(userId);
-  const result = await updateFavorites({ _id }, recipe);
+  const result = await updateFavorites(_id, {
+    $addToSet: { favorite: userId },
+  });
   res.json(result);
 };
 
@@ -45,9 +46,7 @@ const deleteFromFavorite = async (req, res) => {
   if (!recipe) {
     throw HttpError(404, `Recipe with id: ${_id} not found`);
   }
-  const { favorite } = recipe;
-  favorite.pop(userId);
-  const result = await updateFavorites({ _id }, recipe);
+  const result = await updateFavorites(_id, { $pull: { favorite: userId } });
   res.json(result);
 };
 
