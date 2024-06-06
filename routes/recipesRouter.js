@@ -8,6 +8,8 @@ recipesRouter.get("/popular", recipesControllers.getPopular);
 
 recipesRouter.use(authenticateToken);
 
+recipesRouter.get("/own", recipesControllers.getOwnRecipes);
+
 recipesRouter.get("/favorite", recipesControllers.getFavorite);
 
 recipesRouter.post("/favorite/:id", recipesControllers.addToFavorite);

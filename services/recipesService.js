@@ -1,5 +1,10 @@
 import Recipe from "../models/Recipe.js";
 
+export const listRecipes = (search) => {
+  const { filter = {}, settings = {} } = search;
+  return Recipe.find(filter, "_id title description thumb", settings);
+};
+
 export const getRecipes = (skip, limit, filterId) => {
   const matchStage = filterId ? { favorite: filterId } : {};
   return Recipe.aggregate([
