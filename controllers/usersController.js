@@ -2,10 +2,43 @@ import fs from "fs/promises";
 import * as userService from "../services/usersService.js";
 import User from "../models/User.js";
 import HttpError from "../helpers/HttpError.js";
-import { ctrlWrapper } from "../decorators/index.js";
-import { uploadAvatar } from "../helpers/cloudinary.js";
+import User from "../models/User.js";
+import HttpError from "../helpers/HttpError.js";
+import * as userService from "../services/usersService.js";
+import ctrlWrapper from "../decorators/ctrlWrappe.js";
+import createToken from "../helpers/createToken.js";
 
-export const register = async (req, res) => {
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await userService.findUserByEmail(email);
+  if (!user || !(await user.isPasswordValid(password))) {
+    throw HttpError(400, "Invalid credentials");
+  }
+  const token = createToken(user);
+  await userService.updateToken(user._id, token);
+  res.json({
+    user: {
+      name: user.name,
+      avatar: user.avatar || null,
+      favorites: user.favorites || [],
+    },
+    token,
+  });
+};
+
+const getCurrentUser = async (req, res) => {
+  const { user } = req;
+  const currentUser = await userService.findUserById(user._id);
+  res.json({
+    user: {
+      name: currentUser.name,
+      avatar: currentUser.avatar || null,
+      favorites: currentUser.favorites || [],
+    },
+  });
+};
+
+const register = async (req, res) => {
   const { name, email, password } = req.body;
   const existingUser = await userService.findUserByEmail(email);
 
@@ -16,6 +49,14 @@ export const register = async (req, res) => {
   const user = await userService.createUser({ name, email, password });
 
   res.status(201).json({ user });
+  res.status(201).json({
+    user: {
+      name: user.name,
+      avatar: user.avatar,
+      favotires: user.favorites,
+    },
+    token: user.token,
+  });
 };
 
 const updateAvatar = async (req, res) => {
@@ -37,16 +78,7 @@ const updateAvatar = async (req, res) => {
 };
 
 const getAll = async (req, res) => {
-  // const { _id: owner } = req.user;
-  // const { page = 1, limit = 10 } = req.query;
-  // const skip = (page - 1) * limit;
   const result = await User.find();
-  //  ( { owner }
-  //   //   , "-createdAt -updatedAt", {
-  //   //   skip,
-  //   //   limit,
-  //   // }
-  // ).populate("owner", "name email");)
   res.json(result);
 };
 
@@ -61,11 +93,8 @@ const getFollowersById = async (req, res) => {
 };
 
 const getFollowings = async (req, res) => {
-  // змінити коли буде авторизований user -->
-  // ----------------------------------------------------
-  // const { _id: userId } = req.user;
   const { id: userId } = req.params;
-  // ----------------------------------------------------
+
   const user = await User.findById(userId);
   if (!user) {
     throw HttpError(404, `User with id=${userId} not found`);
@@ -146,6 +175,8 @@ const removeFollowing = async (req, res) => {
 export default {
   register: ctrlWrapper(register),
   updateAvatar: ctrlWrapper(updateAvatar),
+  login: ctrlWrapper(login),
+  getCurrentUser: ctrlWrapper(getCurrentUser),
   getAll: ctrlWrapper(getAll),
   getFollowersById: ctrlWrapper(getFollowersById),
   getFollowings: ctrlWrapper(getFollowings),

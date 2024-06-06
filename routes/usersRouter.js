@@ -1,28 +1,27 @@
 import { Router } from "express";
 import { authenticateToken, upload } from "../middlewares/index.js";
-// import {
-//   register,
-//   getAll,
-//   getFollowersById,
-//   getFollowings,
-//   addFollowing,
-// } from "../controllers/usersController.js";
-
 import userController from "../controllers/usersController.js";
 import validateBody from "../helpers/validateBody.js";
-import { userRegistrationSchema } from "../schemas/userSchema.js";
+import usersController from "../controllers/usersController.js";
+import {
+  userRegistrationSchema,
+  userLoginSchema,
+} from "../schemas/userSchema.js";
+import authenticateToken from "../middlewares/authenticateToken.js";
 
 const usersRouter = Router();
-
-// usersRouter.use(authenticateToken);
 
 usersRouter.post(
   "/register",
   validateBody(userRegistrationSchema),
-  userController.register
+  usersController.register
 );
 
-usersRouter.get("/", userController.getAll);
+usersRouter.post(
+  "/login",
+  validateBody(userLoginSchema),
+  usersController.login
+);
 
 usersRouter.patch(
   "/avatars",
@@ -33,14 +32,16 @@ usersRouter.patch(
 
 usersRouter.get("/:id/followers", userController.getFollowersById);
 
-// змінити коли буде авторизований user -->
-// ----------------------------------------------------
-// usersRouter.get("/followings", userController.getFollowings);
-usersRouter.get("/:id/followings", userController.getFollowings);
-// ----------------------------------------------------
+usersRouter.get("/current", authenticateToken, usersController.getCurrentUser);
 
-usersRouter.patch("/addFollowing/:id", userController.addFollowing);
+usersRouter.get("/", usersController.getAll);
 
-usersRouter.patch("/removeFollowing/:id", userController.removeFollowing);
+usersRouter.get("/:id/followers", usersController.getFollowersById);
+
+usersRouter.get("/:id/followings", usersController.getFollowings);
+
+usersRouter.patch("/addFollowing/:id", usersController.addFollowing);
+
+usersRouter.patch("/removeFollowing/:id", usersController.removeFollowing);
 
 export default usersRouter;

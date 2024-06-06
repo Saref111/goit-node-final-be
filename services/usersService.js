@@ -1,24 +1,17 @@
-import User from "../models/User.js";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
+import User from '../models/User.js';
+import createToken from '../helpers/createToken.js';
 
 export const createUser = async (user) => {
-  const newUser = new User(user);
-  await newUser.save();
-  const token = createToken(newUser);
-  await updateToken(newUser._id, token);
-  return newUser;
+    const newUser = new User({...user});
+    await newUser.save();
+    
+    const token = createToken(newUser);
+    const newUserWithToken = await updateToken(newUser._id, token);
+    return newUserWithToken;
 };
 
 export const findUserByEmail = async (email) => {
   return await User.findOne({ email });
-};
-
-export const createToken = (user) => {
-  return jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
 };
 
 export const findUserById = async (id) => {
