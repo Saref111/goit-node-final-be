@@ -2,9 +2,6 @@ import fs from "fs/promises";
 import * as userService from "../services/usersService.js";
 import User from "../models/User.js";
 import HttpError from "../helpers/HttpError.js";
-import User from "../models/User.js";
-import HttpError from "../helpers/HttpError.js";
-import * as userService from "../services/usersService.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import createToken from "../helpers/createToken.js";
 

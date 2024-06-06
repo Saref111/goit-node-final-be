@@ -7,7 +7,6 @@ import {
   userRegistrationSchema,
   userLoginSchema,
 } from "../schemas/userSchema.js";
-import authenticateToken from "../middlewares/authenticateToken.js";
 
 const usersRouter = Router();
 
