@@ -5,7 +5,22 @@ import {
   getRecipes,
   getRecipeById,
   updateFavorites,
+  listRecipes,
 } from "../services/recipesService.js";
+
+const getOwnRecipes = async (req, res) => {
+  const { _id: owner } = req.user;
+  let filter = { owner };
+  const { page = 1, limit = 20 } = req.query;
+  const skip = (page - 1) * limit;
+  const settings = { skip, limit };
+
+  const result = await listRecipes({ filter, settings });
+
+  res.json({
+    result,
+  });
+};
 
 const getPopular = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
@@ -51,6 +66,7 @@ const deleteFromFavorite = async (req, res) => {
 };
 
 export default {
+  getOwnRecipes: ctrlWrapper(getOwnRecipes),
   getPopular: ctrlWrapper(getPopular),
   getFavorite: ctrlWrapper(getFavorite),
   addToFavorite: ctrlWrapper(addToFavorite),
