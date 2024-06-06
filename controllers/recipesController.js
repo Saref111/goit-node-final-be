@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import ctrlWrapper from "../decorators/ctrlWrappe.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -57,3 +58,26 @@ export default {
   addToFavorite: ctrlWrapper(addToFavorite),
   deleteFromFavorite: ctrlWrapper(deleteFromFavorite),
 };
+=======
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
+import HttpError from "../helpers/HttpError.js";
+import { listRecipes } from "../services/recipesService.js";
+
+const getRecipes = async (req, res) => {
+  const { page = 1, limit = 5, category, area, ingredient } = req.query;
+  const skip = (page - 1) * limit;
+  console.log(typeof category);
+  const settings = { skip, limit };
+  const filter = {
+    ...(category && { category }),
+    ...(area && { area }),
+    ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
+  };
+  const fields = "";
+
+  const result = await listRecipes({ filter, fields, settings });
+  res.status(200).json(result);
+};
+
+export default { getRecipes: ctrlWrapper(getRecipes) };
+>>>>>>> abb3784 (added ricipes controller, added recipes service,  added recipes route, added recipes router,  added validateQuery middleware, added validateQuerySchema, fixed mongoose schema,)

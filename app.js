@@ -6,9 +6,13 @@ import mongoose from "mongoose";
 import usersRouter from "./routes/usersRouter.js";
 import "./config/passport-config.js";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import recipesRouter from "./routes/recipesRouter.js";
 =======
 >>>>>>> 5f01658 (added recipes service)
+=======
+import recipesRouter from "./routes/recipesRouter.js";
+>>>>>>> abb3784 (added ricipes controller, added recipes service,  added recipes route, added recipes router,  added validateQuery middleware, added validateQuerySchema, fixed mongoose schema,)
 
 dotenv.config();
 
@@ -25,7 +29,10 @@ app.use(express.static("public"));
 
 app.use("/api/users", usersRouter);
 app.use("/api/recipes", recipesRouter);
+<<<<<<< HEAD
 
+=======
+>>>>>>> abb3784 (added ricipes controller, added recipes service,  added recipes route, added recipes router,  added validateQuery middleware, added validateQuerySchema, fixed mongoose schema,)
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
 });
