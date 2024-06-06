@@ -6,10 +6,7 @@ const getAllIngredients = async(req, res) => {
 const total = await Ingredients.countDocuments({});
 const ingredients = await getIngredients();
 
-res.status(200).json({
-    results: ingredients,
-    total
-})
+res.json(ingredients)
 }
 
 export default {
