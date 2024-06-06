@@ -5,7 +5,7 @@ import HttpError from "../helpers/HttpError.js";
 import User from "../models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import * as userService from "../services/usersService.js";
-import ctrlWrapper from "../decorators/ctrlWrappe.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import createToken from "../helpers/createToken.js";
 
 const login = async (req, res) => {
@@ -43,7 +43,7 @@ const register = async (req, res) => {
   const existingUser = await userService.findUserByEmail(email);
 
   if (existingUser) {
-    throw  HttpError(400, "User already exists")
+    throw HttpError(400, "User already exists");
   }
 
   const user = await userService.createUser({ name, email, password });
