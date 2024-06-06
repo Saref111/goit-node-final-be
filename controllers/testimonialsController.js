@@ -1,11 +1,11 @@
 import { testimonialsList } from "../services/testimonialsServices.js";
+import ctrlWrappe from "../decorators/ctrlWrappe.js";
 
-export const getAllTestimonials = async (req, res, next) => {
-  try {
-    const result = await testimonialsList();
+const getAllTestimonials = async (req, res, next) => {
+  const result = await testimonialsList();
+  res.json(result);
+};
 
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
+export default {
+  getAllTestimonials: ctrlWrappe(getAllTestimonials),
 };
