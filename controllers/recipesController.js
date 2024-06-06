@@ -1,4 +1,4 @@
-import ctrlWrapper from "../decorators/ctrlWrappe.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 
 import {
