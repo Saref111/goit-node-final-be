@@ -43,7 +43,7 @@ const register = async (req, res) => {
   const existingUser = await userService.findUserByEmail(email);
 
   if (existingUser) {
-    return res.status(409).json({ message: "User already exists" });
+    throw  HttpError(400, "User already exists")
   }
 
   const user = await userService.createUser({ name, email, password });
@@ -52,8 +52,8 @@ const register = async (req, res) => {
   res.status(201).json({
     user: {
       name: user.name,
-      avatar: user.avatar,
-      favotires: user.favorites,
+      avatar: user.avatar || null,
+      favotires: user.favorites || [],
     },
     token: user.token,
   });
