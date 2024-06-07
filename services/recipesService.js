@@ -5,12 +5,8 @@ export const listRecipes = (search) => {
   return Recipe.find(filter, "_id title description thumb", settings);
 };
 
-export const getRecipes = (skip, limit, filterId) => {
-  const matchStage = filterId ? { favorite: filterId } : {};
+export const getRecipes = (skip, limit) => {
   return Recipe.aggregate([
-    {
-      $match: matchStage,
-    },
     {
       $addFields: {
         favoriteLength: {
@@ -30,6 +26,14 @@ export const getRecipes = (skip, limit, filterId) => {
     },
     {
       $limit: limit,
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        description: 1,
+        thumb: 1,
+      },
     },
   ]);
 };

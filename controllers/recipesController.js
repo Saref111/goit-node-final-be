@@ -23,17 +23,19 @@ const getOwnRecipes = async (req, res) => {
 };
 
 const getPopular = async (req, res) => {
-  const { page = 1, limit = 5 } = req.query;
+  const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
   const popular = await getRecipes(skip, limit);
   res.json(popular);
 };
 
 const getFavorite = async (req, res) => {
-  const { _id: userId } = req.user;
-  const { page = 1, limit = 5 } = req.query;
+  const { _id: owner } = req.user;
+  const filter = { favorite: owner };
+  const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
-  const favorites = await getRecipes(skip, limit, userId);
+  const settings = { skip, limit };
+  const favorites = await listRecipes({ filter, settings });
   res.json(favorites);
 };
 
