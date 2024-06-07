@@ -63,6 +63,10 @@ const deleteFromFavorite = async (req, res) => {
   if (!recipe) {
     throw HttpError(404, `Recipe with id: ${_id} not found`);
   }
+  const { favorite } = recipe;
+  if (!favorite.includes(userId)) {
+    throw HttpError(409, `Recipe not in favorites`);
+  }
   const result = await updateFavorites(_id, { $pull: { favorite: userId } });
   res.json(result);
 };
