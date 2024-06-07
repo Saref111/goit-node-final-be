@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    avatar_preview: {
+    preview: {
       type: String,
       default: null,
     },

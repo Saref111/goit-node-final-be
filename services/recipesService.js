@@ -36,6 +36,10 @@ export const listRecipes = (search) => {
   return Recipe.find(filter, "_id title description thumb", settings);
 };
 
+export const countRecipes = (filter) => Recipe.countDocuments(filter);
+
+export const addRecipe = (data) => Recipe.create(data);
+
 export const getRecipes = (skip, limit) => {
   return Recipe.aggregate([
     {

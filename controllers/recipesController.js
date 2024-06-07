@@ -1,5 +1,8 @@
+import fs from "fs/promises";
+
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
+import { uploadRecipe } from "../helpers/cloudinary.js";
 
 import {
   getRecipes,
@@ -7,6 +10,8 @@ import {
   getRecipeById,
   updateFavorites,
   listRecipes,
+  countRecipes,
+  addRecipe,
   searchRecipes,
 } from "../services/recipesService.js";
 const getQueryRecipes = async (req, res) => {
@@ -34,11 +39,38 @@ const getOwnRecipes = async (req, res) => {
   const skip = (page - 1) * limit;
   const settings = { skip, limit };
 
-  const result = await listRecipes({ filter, settings });
+  const results = await listRecipes({ filter, settings });
+
+  const total = await countRecipes({ owner });
+  const totalPages = Math.ceil(total / limit);
 
   res.json({
-    result,
+    page,
+    limit,
+    totalPages,
+    results,
   });
+};
+
+const createRecipe = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { path, mimetype } = req.file;
+
+  if (mimetype.split("/")[0] !== "image") {
+    await fs.unlink(path);
+    throw HttpError(400, "Unsupported file type");
+  }
+  const [thumb, preview] = await uploadRecipe(path);
+  await fs.unlink(path);
+
+  const newRecipe = await addRecipe({
+    ...req.body,
+    owner,
+    thumb,
+    preview,
+  });
+
+  res.json(newRecipe);
 };
 
 const getPopular = async (req, res) => {
@@ -94,6 +126,7 @@ export default {
   getQueryRecipes: ctrlWrapper(getQueryRecipes),
   getOneRecipe: ctrlWrapper(getOneRecipe),
   getOwnRecipes: ctrlWrapper(getOwnRecipes),
+  createRecipe: ctrlWrapper(createRecipe),
   getPopular: ctrlWrapper(getPopular),
   getFavorite: ctrlWrapper(getFavorite),
   addToFavorite: ctrlWrapper(addToFavorite),
