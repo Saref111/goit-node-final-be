@@ -16,8 +16,8 @@ usersRouter.get("/", userController.getAll);
 
 usersRouter.patch(
   "/avatars",
-  upload.single("avatar"),
   authenticateToken,
+  upload.single("avatar"),
   userController.updateAvatar
 );
 
