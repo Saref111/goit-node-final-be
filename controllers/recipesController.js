@@ -15,7 +15,6 @@ import {
 
 const getOwnRecipes = async (req, res) => {
   const { _id: owner } = req.user;
-  // const owner = "64c8d958249fae54bae90bb9";
   let filter = { owner };
   const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
@@ -23,12 +22,13 @@ const getOwnRecipes = async (req, res) => {
 
   const results = await listRecipes({ filter, settings });
 
-  const total = await countRecipes(owner);
+  const total = await countRecipes({ owner });
+  const totalPages = Math.ceil(total / limit);
 
   res.json({
     page,
     limit,
-    total,
+    totalPages,
     results,
   });
 };
@@ -41,14 +41,14 @@ const createRecipe = async (req, res) => {
     await fs.unlink(path);
     throw HttpError(400, "Unsupported file type");
   }
-  const [thumb, thumb_preview] = await uploadRecipe(path);
+  const [thumb, preview] = await uploadRecipe(path);
   await fs.unlink(path);
 
   const newRecipe = await addRecipe({
     ...req.body,
     owner,
     thumb,
-    thumb_preview,
+    preview,
   });
 
   res.json(newRecipe);

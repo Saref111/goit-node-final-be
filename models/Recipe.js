@@ -2,7 +2,16 @@ import mongoose from "mongoose";
 import hooks from "./hooks.js";
 
 const ingredientSchema = mongoose.Schema({
-  _id: { type: mongoose.Types.ObjectId, ref: "Ingredient" },
+  _id: false,
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ingredient",
+    required: [true, "ingredient is required"],
+  },
+  measure: {
+    type: String,
+    required: [true, "measure of ingredient is required"],
+  },
 });
 
 const recipeSchema = mongoose.Schema(
@@ -12,15 +21,17 @@ const recipeSchema = mongoose.Schema(
       required: [true, "Title is required"],
     },
     category: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
       required: [true, "Category is required"],
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
     },
     area: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "area",
       required: [true, "Area is required"],
     },
     ingredients: {
@@ -39,9 +50,9 @@ const recipeSchema = mongoose.Schema(
       type: String,
       required: [true, "Thumb is required"],
     },
-    thumb_preview: {
+    preview: {
       type: String,
-      required: [true, "Thumb preview is required"],
+      required: [true, "Preview is required"],
     },
     favorite: {
       type: Array,

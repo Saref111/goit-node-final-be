@@ -2,8 +2,7 @@ import Recipe from "../models/Recipe.js";
 
 export const listRecipes = (search) => {
   const { filter = {}, settings = {} } = search;
-  // return Recipe.find(filter, "_id title description thumb", settings);
-  return Recipe.find(filter, "", settings);
+  return Recipe.find(filter, "_id title description thumb", settings);
 };
 
 export const countRecipes = (filter) => Recipe.countDocuments(filter);
