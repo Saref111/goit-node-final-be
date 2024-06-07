@@ -3,10 +3,29 @@ import HttpError from "../helpers/HttpError.js";
 
 import {
   getRecipes,
+  getRecipe,
   getRecipeById,
   updateFavorites,
   listRecipes,
+  searchRecipes,
 } from "../services/recipesService.js";
+const getQueryRecipes = async (req, res) => {
+  const { page = 1, limit = 5, category, area, ingredient } = req.query;
+  const skip = (page - 1) * limit;
+  const settings = { skip, limit };
+  const filter = {
+    ...(category && { category }),
+    ...(area && { area }),
+    ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
+  };
+  const result = await searchRecipes({ filter, settings }, true);
+  res.json(result);
+};
+const getOneRecipe = async (req, res) => {
+  const { id: _id } = req.params;
+  const result = await getRecipe({ _id });
+  res.json({ result });
+};
 
 const getOwnRecipes = async (req, res) => {
   const { _id: owner } = req.user;
@@ -66,6 +85,8 @@ const deleteFromFavorite = async (req, res) => {
 };
 
 export default {
+  getQueryRecipes: ctrlWrapper(getQueryRecipes),
+  getOneRecipe: ctrlWrapper(getOneRecipe),
   getOwnRecipes: ctrlWrapper(getOwnRecipes),
   getPopular: ctrlWrapper(getPopular),
   getFavorite: ctrlWrapper(getFavorite),
