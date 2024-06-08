@@ -1,20 +1,7 @@
 import { Schema, model } from "mongoose";
 import hooks from "./hooks.js";
 
-const ingredientSchema = Schema({
-  _id: false,
-  id: {
-    type: Schema.Types.ObjectId,
-    ref: "ingredient",
-    required: [true, "ingredient is required"],
-  },
-  measure: {
-    type: String,
-    required: [true, "Measure of ingredient is required"],
-  },
-});
-
-const recipeSchema = Schema(
+const recipeSchema = mongoose.Schema(
   {
     title: {
       type: String,
@@ -35,10 +22,17 @@ const recipeSchema = Schema(
       ref: "area",
       required: [true, "Area is required"],
     },
-    ingredients: {
-      type: [ingredientSchema],
-      required: [true, "Ingredients are required"],
-    },
+    ingredients: [
+      {
+        _id: false,
+        id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ingredient",
+          required: true,
+        },
+        measure: { type: String, required: true },
+      },
+    ],
     instructions: {
       type: String,
       required: [true, "Instructions are required"],
