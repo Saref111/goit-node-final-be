@@ -47,15 +47,20 @@ const getOneRecipe = async (req, res) => {
 };
 
 const getOwnRecipes = async (req, res) => {
-  const { _id: owner } = req.user;
+  const { id } = req.params;
+  const { _id } = req.user;
+  const owner = id ? id : _id;
+
   let filter = { owner };
   const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
   const settings = { skip, limit };
 
-  const results = await listRecipes({ filter, settings });
+  const [results, total] = await Promise.all([
+    listRecipes({ filter, settings }),
+    countRecipes({ owner }),
+  ]);
 
-  const total = await countRecipes({ owner });
   const totalPages = Math.ceil(total / limit);
 
   res.json({
