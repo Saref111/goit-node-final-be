@@ -8,7 +8,9 @@ export const searchRecipes = async ({ filter, settings }) =>
 export const getRecipe = (filter) => {
   return Recipe.findOne(filter)
     .populate("owner", "name avatar")
-    .populate("ingredients.id");
+    .populate("ingredients.id")
+    .populate("category")
+    .populate("area");
 };
 
 export const listRecipes = (search) => {

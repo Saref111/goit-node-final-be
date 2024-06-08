@@ -43,7 +43,7 @@ const getQueryRecipes = async (req, res) => {
 const getOneRecipe = async (req, res) => {
   const { id: _id } = req.params;
   const result = await getRecipe({ _id });
-  res.json({ result });
+  res.json(result);
 };
 
 const getOwnRecipes = async (req, res) => {

@@ -1,4 +1,3 @@
-import Areas from "../models/Areas.js";
+import Area from "../models/Area.js";
 
-export const getAreas = () => Areas.find().sort({ name: 1 });
-
+export const getAreas = () => Areas.find();
