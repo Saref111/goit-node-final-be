@@ -26,25 +26,17 @@ const getQueryRecipes = async (req, res) => {
     ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
   };
 
-  const result = await Promise.all([
+  const [results, totalDocuments] = await Promise.all([
     searchRecipes({ filter, settings }),
     countRecipes(filter),
-  ])
-    .then(([recipes, totalDocuments]) => {
-      const totalPages = Math.ceil(totalDocuments / limit);
-      return {
-        page,
-        limit,
-        totalPages,
-        results: recipes,
-      };
-    })
-    .catch((error) => {
-      console.error(error);
-      throw error;
-    });
-
-  res.json(result);
+  ]);
+  const totalPages = Math.ceil(totalDocuments / limit);
+  res.json({
+    page,
+    limit,
+    totalPages,
+    results,
+  });
 };
 
 const getOneRecipe = async (req, res) => {
