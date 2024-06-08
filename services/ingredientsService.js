@@ -1,4 +1,3 @@
-import Ingredients from "../models/Ingredients.js";
+import Ingredient from "../models/Ingredient.js";
 
-export const getIngredients = () =>  Ingredients.find();
-
+export const getIngredients = () => Ingredient.find();

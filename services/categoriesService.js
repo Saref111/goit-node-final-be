@@ -1,5 +1,3 @@
-import Categories from "../models/Categories.js";
+import Category from "../models/Category.js";
 
-export const getAllCategories = () => Categories.find();
-
-
+export const getAllCategories = () => Category.find();
