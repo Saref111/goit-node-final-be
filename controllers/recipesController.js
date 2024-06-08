@@ -82,8 +82,7 @@ const createRecipe = async (req, res) => {
 const deleteRecipe = async (req, res) => {
   const { id: _id } = req.params;
   const { _id: owner } = req.user;
-  console.log(_id);
-  console.log(owner);
+
   const result = await removeRecipe({ _id, owner });
   if (!result) {
     throw HttpError(404);

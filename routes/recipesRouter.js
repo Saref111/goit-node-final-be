@@ -19,7 +19,7 @@ recipesRouter.get(
   validateQuery(querySchema),
   recipesControllers.getQueryRecipes
 );
-// recipesRouter.get("/:id", recipesControllers.getOneRecipe);
+recipesRouter.get("/:id", recipesControllers.getOneRecipe);
 recipesRouter.get("/popular", recipesControllers.getPopular);
 
 recipesRouter.use(authenticateToken);
