@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 import hooks from "./hooks.js";
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -44,6 +44,6 @@ userSchema.post("save", hooks.handleSaveError);
 userSchema.pre("findOneAndUpdate", hooks.setUpdateSettings);
 userSchema.post("findOneAndUpdate", hooks.handleSaveError);
 
-const User = mongoose.model("user", userSchema);
+const User = model("user", userSchema);
 
 export default User;
