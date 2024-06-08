@@ -15,8 +15,6 @@ dotenv.config();
 
 const uri = process.env.DB_HOST;
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
 const app = express();
 
 app.use(morgan("tiny"));
@@ -40,6 +38,18 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-app.listen(3000, () => {
-  console.log("Server is running. Use our API on port: 3000");
-});
+const main = async () => {
+  try {
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log("Database connection successful");
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  app.listen(3000, () => {
+    console.log("Server started");
+  });
+};
+
+main();

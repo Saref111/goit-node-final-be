@@ -45,7 +45,6 @@ const register = async (req, res) => {
 
   const user = await userService.createUser({ name, email, password });
 
-  res.status(201).json({ user });
   res.status(201).json({
     user: {
       name: user.name,
@@ -151,6 +150,12 @@ const removeFollowing = async (req, res) => {
   res.json(result.following);
 };
 
+const logout = async (req, res) => {
+  const { _id: userId } = req.user;
+  await userService.updateToken(userId, null);
+  res.status(204).send();
+}
+
 export default {
   register: ctrlWrapper(register),
   updateAvatar: ctrlWrapper(updateAvatar),
@@ -161,4 +166,5 @@ export default {
   getFollowings: ctrlWrapper(getFollowings),
   addFollowing: ctrlWrapper(addFollowing),
   removeFollowing: ctrlWrapper(removeFollowing),
+  logout: ctrlWrapper(logout),
 };

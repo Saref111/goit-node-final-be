@@ -6,9 +6,7 @@ export const createUser = async (user) => {
     await newUser.save();
     
     const token = createToken(newUser);
-    console.log('token', token);
     const newUserWithToken = await updateToken(newUser._id, token);
-    console.log('newUserWithToken', newUserWithToken);
     return newUserWithToken;
 };
 
@@ -21,7 +19,7 @@ export const findUserById = async (id) => {
 };
 
 export const updateToken = async (id, token) => {
-  return await User.updateOne({ _id: id }, { token });
+  return await User.findByIdAndUpdate({ _id: id }, { token });
 };
 
 export const updateUser = (id, data) => User.findByIdAndUpdate(id, data);
