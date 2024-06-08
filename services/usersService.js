@@ -6,9 +6,7 @@ export const createUser = async (user) => {
     await newUser.save();
     
     const token = createToken(newUser);
-    console.log('token', token);
     const newUserWithToken = await updateToken(newUser._id, token);
-    console.log('newUserWithToken', newUserWithToken);
     return newUserWithToken;
 };
 
