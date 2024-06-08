@@ -1,5 +1,6 @@
 import Recipe from "../models/Recipe.js";
 import countDocuments from "./countDocuments.js";
+
 export const searchRecipes = async ({ filter, settings }, withOwner) => {
   const recipeQuery = withOwner
     ? Recipe.find(filter, "title description thumb", settings).populate(
@@ -25,6 +26,7 @@ export const searchRecipes = async ({ filter, settings }, withOwner) => {
       throw error;
     });
 };
+
 export const getRecipe = (filter) => {
   return Recipe.findOne(filter)
     .populate("owner", "name avatar")
@@ -37,6 +39,8 @@ export const listRecipes = (search) => {
 };
 
 export const countRecipes = (filter) => Recipe.countDocuments(filter);
+
+export const removeRecipe = (filter) => Recipe.findOneAndDelete(filter);
 
 export const addRecipe = (data) => Recipe.create(data);
 
