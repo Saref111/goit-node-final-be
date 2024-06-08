@@ -25,6 +25,8 @@ recipesRouter.use(authenticateToken);
 
 recipesRouter.get("/own", recipesControllers.getOwnRecipes);
 
+recipesRouter.get("/own/:id", validateId, recipesControllers.getOwnRecipes);
+
 recipesRouter.post(
   "/own",
   upload.single("thumb"),
