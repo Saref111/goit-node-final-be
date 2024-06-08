@@ -4,7 +4,6 @@ import User from "../models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import createToken from "../helpers/createToken.js";
-import { log } from "console";
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -46,7 +45,6 @@ const register = async (req, res) => {
 
   const user = await userService.createUser({ name, email, password });
 
-  res.status(201).json({ user });
   res.status(201).json({
     user: {
       name: user.name,
