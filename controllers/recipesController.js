@@ -90,7 +90,7 @@ const getFavorite = async (req, res) => {
   res.json(favorites);
 };
 
-const addToFavorite = async (req, res) => {
+const addFavorite = async (req, res) => {
   const { _id: userId } = req.user;
   const { id: _id } = req.params;
   const recipe = await getRecipeById({ _id });
@@ -107,7 +107,7 @@ const addToFavorite = async (req, res) => {
   res.json(result);
 };
 
-const deleteFromFavorite = async (req, res) => {
+const removeFavorite = async (req, res) => {
   const { _id: userId } = req.user;
   const { id: _id } = req.params;
   const recipe = await getRecipeById({ _id });
@@ -129,6 +129,6 @@ export default {
   createRecipe: ctrlWrapper(createRecipe),
   getPopular: ctrlWrapper(getPopular),
   getFavorite: ctrlWrapper(getFavorite),
-  addToFavorite: ctrlWrapper(addToFavorite),
-  deleteFromFavorite: ctrlWrapper(deleteFromFavorite),
+  addFavorite: ctrlWrapper(addFavorite),
+  removeFavorite: ctrlWrapper(removeFavorite),
 };
