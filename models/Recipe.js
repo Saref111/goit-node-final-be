@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import hooks from "./hooks.js";
 
-const recipeSchema = mongoose.Schema(
+const recipeSchema = Schema(
   {
     title: {
       type: String,
@@ -26,7 +26,7 @@ const recipeSchema = mongoose.Schema(
       {
         _id: false,
         id: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: Schema.Types.ObjectId,
           ref: "ingredient",
           required: true,
         },

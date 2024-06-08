@@ -12,7 +12,6 @@ import { recipeCreateSchema } from "../schemas/recipeSchema.js";
 import validateBody from "../helpers/validateBody.js";
 import validateQuery from "../helpers/validateQuary.js";
 import { querySchema } from "../schemas/querySchema.js";
-import validateId from "../middlewares/validateId.js";
 const recipesRouter = Router();
 recipesRouter.get(
   "/",

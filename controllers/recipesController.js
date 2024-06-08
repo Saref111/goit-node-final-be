@@ -25,25 +25,24 @@ const getQueryRecipes = async (req, res) => {
     ...(area && { area }),
     ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
   };
-  const result = await searchRecipes({ filter, settings });
-  // const result = await Promise.all([
-  //   searchRecipes({ filter, settings }),
-  //   countRecipes(),
-  // ])
-  //   .then(([recipes, totalDocuments]) => {
-  //     console.log(recipes);
-  //     const totalPages = Math.ceil(totalDocuments / limit);
-  //     return {
-  //       page,
-  //       limit,
-  //       totalPages,
-  //       results: recipes,
-  //     };
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //     throw error;
-  //   });
+
+  const result = await Promise.all([
+    searchRecipes({ filter, settings }),
+    countRecipes(filter),
+  ])
+    .then(([recipes, totalDocuments]) => {
+      const totalPages = Math.ceil(totalDocuments / limit);
+      return {
+        page,
+        limit,
+        totalPages,
+        results: recipes,
+      };
+    })
+    .catch((error) => {
+      console.error(error);
+      throw error;
+    });
 
   res.json(result);
 };
