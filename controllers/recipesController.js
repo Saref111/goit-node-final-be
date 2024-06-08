@@ -13,7 +13,9 @@ import {
   countRecipes,
   addRecipe,
   searchRecipes,
+  removeRecipe,
 } from "../services/recipesService.js";
+
 const getQueryRecipes = async (req, res) => {
   const { page = 1, limit = 5, category, area, ingredient } = req.query;
   const skip = (page - 1) * limit;
@@ -26,6 +28,7 @@ const getQueryRecipes = async (req, res) => {
   const result = await searchRecipes({ filter, settings }, true);
   res.json(result);
 };
+
 const getOneRecipe = async (req, res) => {
   const { id: _id } = req.params;
   const result = await getRecipe({ _id });
@@ -54,6 +57,9 @@ const getOwnRecipes = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   const { _id: owner } = req.user;
+  if (!req.file) {
+    throw HttpError(400, "thumb must have photo");
+  }
   const { path, mimetype } = req.file;
 
   if (mimetype.split("/")[0] !== "image") {
@@ -71,6 +77,19 @@ const createRecipe = async (req, res) => {
   });
 
   res.json(newRecipe);
+};
+
+const deleteRecipe = async (req, res) => {
+  const { id: _id } = req.params;
+  const { _id: owner } = req.user;
+  console.log(_id);
+  console.log(owner);
+  const result = await removeRecipe({ _id, owner });
+  if (!result) {
+    throw HttpError(404);
+  }
+
+  res.json(result);
 };
 
 const getPopular = async (req, res) => {
@@ -127,6 +146,7 @@ export default {
   getOneRecipe: ctrlWrapper(getOneRecipe),
   getOwnRecipes: ctrlWrapper(getOwnRecipes),
   createRecipe: ctrlWrapper(createRecipe),
+  deleteRecipe: ctrlWrapper(deleteRecipe),
   getPopular: ctrlWrapper(getPopular),
   getFavorite: ctrlWrapper(getFavorite),
   addFavorite: ctrlWrapper(addFavorite),

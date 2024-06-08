@@ -5,6 +5,7 @@ import {
   authenticateToken,
   upload,
   isEmptyBody,
+  validateId,
 } from "../middlewares/index.js";
 
 import { recipeCreateSchema } from "../schemas/recipeSchema.js";
@@ -18,7 +19,7 @@ recipesRouter.get(
   validateQuery(querySchema),
   recipesControllers.getQueryRecipes
 );
-recipesRouter.get("/:id", recipesControllers.getOneRecipe);
+// recipesRouter.get("/:id", recipesControllers.getOneRecipe);
 recipesRouter.get("/popular", recipesControllers.getPopular);
 
 recipesRouter.use(authenticateToken);
@@ -32,6 +33,8 @@ recipesRouter.post(
   validateBody(recipeCreateSchema),
   recipesControllers.createRecipe
 );
+
+recipesRouter.delete("/own/:id", validateId, recipesControllers.deleteRecipe);
 
 recipesRouter.get("/favorite", recipesControllers.getFavorite);
 
