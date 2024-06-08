@@ -31,6 +31,7 @@ const getQueryRecipes = async (req, res) => {
     countRecipes(filter),
   ]);
   const totalPages = Math.ceil(totalDocuments / limit);
+
   res.json({
     page,
     limit,
