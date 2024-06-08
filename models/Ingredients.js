@@ -18,6 +18,6 @@ const ingredientsSchema = new Schema(
   { versionKey: false }
 );
 
-const Ingredients = model("ingredients", ingredientsSchema);
+const Ingredients = model("ingredient", ingredientsSchema);
 
 export default Ingredients;

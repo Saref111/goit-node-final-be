@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const isValidObjectId = (value, helpers) => {
   if (!mongoose.Types.ObjectId.isValid(value)) {
-    return helpers.error("Id is invalid");
+    return helpers.error(`${value} is not valid`);
   }
   return value;
 };
