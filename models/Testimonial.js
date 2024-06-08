@@ -4,13 +4,13 @@ const testimonialSchema = new Schema(
   {
     testimonial: {
       type: String,
-      required: true,
+      required: [true, "Testimonial is required"],
     },
 
     owner: {
       type: Schema.Types.ObjectId,
       ref: "user",
-      required: true,
+      required: [true, "Owner is required"],
     },
   },
   { versionKey: false }
