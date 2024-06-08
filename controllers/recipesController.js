@@ -1,24 +1,92 @@
+import fs from "fs/promises";
+
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
+import { uploadRecipe } from "../helpers/cloudinary.js";
 
 import {
   getRecipes,
+  getRecipe,
   getRecipeById,
   updateFavorites,
+  listRecipes,
+  countRecipes,
+  addRecipe,
+  searchRecipes,
 } from "../services/recipesService.js";
+const getQueryRecipes = async (req, res) => {
+  const { page = 1, limit = 5, category, area, ingredient } = req.query;
+  const skip = (page - 1) * limit;
+  const settings = { skip, limit };
+  const filter = {
+    ...(category && { category }),
+    ...(area && { area }),
+    ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
+  };
+  const result = await searchRecipes({ filter, settings }, true);
+  res.json(result);
+};
+const getOneRecipe = async (req, res) => {
+  const { id: _id } = req.params;
+  const result = await getRecipe({ _id });
+  res.json({ result });
+};
+
+const getOwnRecipes = async (req, res) => {
+  const { _id: owner } = req.user;
+  let filter = { owner };
+  const { page = 1, limit = 20 } = req.query;
+  const skip = (page - 1) * limit;
+  const settings = { skip, limit };
+
+  const results = await listRecipes({ filter, settings });
+
+  const total = await countRecipes({ owner });
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({
+    page,
+    limit,
+    totalPages,
+    results,
+  });
+};
+
+const createRecipe = async (req, res) => {
+  const { _id: owner } = req.user;
+  const { path, mimetype } = req.file;
+
+  if (mimetype.split("/")[0] !== "image") {
+    await fs.unlink(path);
+    throw HttpError(400, "Unsupported file type");
+  }
+  const [thumb, preview] = await uploadRecipe(path);
+  await fs.unlink(path);
+
+  const newRecipe = await addRecipe({
+    ...req.body,
+    owner,
+    thumb,
+    preview,
+  });
+
+  res.json(newRecipe);
+};
 
 const getPopular = async (req, res) => {
-  const { page = 1, limit = 5 } = req.query;
+  const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
   const popular = await getRecipes(skip, limit);
   res.json(popular);
 };
 
 const getFavorite = async (req, res) => {
-  const { _id: userId } = req.user;
-  const { page = 1, limit = 5 } = req.query;
+  const { _id: owner } = req.user;
+  const filter = { favorite: owner };
+  const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
-  const favorites = await getRecipes(skip, limit, userId);
+  const settings = { skip, limit };
+  const favorites = await listRecipes({ filter, settings });
   res.json(favorites);
 };
 
@@ -33,8 +101,9 @@ const addToFavorite = async (req, res) => {
   if (favorite.includes(userId)) {
     throw HttpError(409, `Recipe already in favorites`);
   }
-  favorite.push(userId);
-  const result = await updateFavorites({ _id }, recipe);
+  const result = await updateFavorites(_id, {
+    $addToSet: { favorite: userId },
+  });
   res.json(result);
 };
 
@@ -46,12 +115,18 @@ const deleteFromFavorite = async (req, res) => {
     throw HttpError(404, `Recipe with id: ${_id} not found`);
   }
   const { favorite } = recipe;
-  favorite.pop(userId);
-  const result = await updateFavorites({ _id }, recipe);
+  if (!favorite.includes(userId)) {
+    throw HttpError(409, `Recipe not in favorites`);
+  }
+  const result = await updateFavorites(_id, { $pull: { favorite: userId } });
   res.json(result);
 };
 
 export default {
+  getQueryRecipes: ctrlWrapper(getQueryRecipes),
+  getOneRecipe: ctrlWrapper(getOneRecipe),
+  getOwnRecipes: ctrlWrapper(getOwnRecipes),
+  createRecipe: ctrlWrapper(createRecipe),
   getPopular: ctrlWrapper(getPopular),
   getFavorite: ctrlWrapper(getFavorite),
   addToFavorite: ctrlWrapper(addToFavorite),

@@ -25,7 +25,7 @@ export const uploadAvatar = async (image) => {
     ],
   });
 
-  return [normal.url, preview.url];
+  return [normal.secure_url, preview.secure_url];
 };
 
 export const uploadRecipe = async (image) => {
@@ -44,5 +44,5 @@ export const uploadRecipe = async (image) => {
     ],
   });
 
-  return [normal.url, preview.url];
+  return [normal.secure_url, preview.secure_url];
 };

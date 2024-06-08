@@ -24,23 +24,35 @@ usersRouter.post(
 
 usersRouter.patch(
   "/avatars",
-  upload.single("avatar"),
   authenticateToken,
+  upload.single("avatar"),
   userController.updateAvatar
 );
 
-usersRouter.get("/:id/followers", userController.getFollowersById);
+usersRouter.get(
+  "/:id/followers",
+  authenticateToken,
+  userController.getFollowersById
+);
 
 usersRouter.get("/current", authenticateToken, usersController.getCurrentUser);
 
 usersRouter.get("/", usersController.getAll);
 
-usersRouter.get("/:id/followers", usersController.getFollowersById);
-
 usersRouter.get("/:id/followings", usersController.getFollowings);
 
-usersRouter.patch("/addFollowing/:id", usersController.addFollowing);
+usersRouter.get("/followings", authenticateToken, userController.getFollowings);
 
-usersRouter.patch("/removeFollowing/:id", usersController.removeFollowing);
+usersRouter.patch(
+  "/addFollowing/:id",
+  authenticateToken,
+  userController.addFollowing
+);
+
+usersRouter.patch(
+  "/removeFollowing/:id",
+  authenticateToken,
+  userController.removeFollowing
+);
 
 export default usersRouter;

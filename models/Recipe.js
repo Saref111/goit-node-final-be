@@ -1,49 +1,72 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 import hooks from "./hooks.js";
 
-const recipeSchema = mongoose.Schema({
-  title: {
+const ingredientSchema = Schema({
+  _id: false,
+  id: {
+    type: Schema.Types.ObjectId,
+    ref: "ingredient",
+    required: [true, "ingredient is required"],
+  },
+  measure: {
     type: String,
-    required: [true, "Title is required"],
-  },
-  category: {
-    type: String,
-    required: [true, "Category is required"],
-  },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  area: {
-    type: String,
-    required: [true, "Area is required"],
-  },
-  ingredients: {
-    type: Array,
-    required: [true, "Ingredients are required"],
-  },
-  instructions: {
-    type: String,
-    required: [true, "Instructions are required"],
-  },
-  description: {
-    type: String,
-    required: [true, "Description is required"],
-  },
-  thumb: {
-    type: Array,
-    required: [true, "Thumb is required"],
-  },
-  favorite: {
-    type: Array,
-    default: [],
+    required: [true, "Measure of ingredient is required"],
   },
 });
+
+const recipeSchema = Schema(
+  {
+    title: {
+      type: String,
+      required: [true, "Title is required"],
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "category",
+      required: [true, "Category is required"],
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: [true, "Owner is required"],
+    },
+    area: {
+      type: Schema.Types.ObjectId,
+      ref: "area",
+      required: [true, "Area is required"],
+    },
+    ingredients: {
+      type: [ingredientSchema],
+      required: [true, "Ingredients are required"],
+    },
+    instructions: {
+      type: String,
+      required: [true, "Instructions are required"],
+    },
+    description: {
+      type: String,
+      required: [true, "Description is required"],
+    },
+    thumb: {
+      type: String,
+      required: [true, "Thumb is required"],
+    },
+    preview: {
+      type: String,
+      required: [true, "Preview is required"],
+    },
+    favorite: {
+      type: Array,
+      default: [],
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
 
 recipeSchema.post("save", hooks.handleSaveError);
 recipeSchema.pre("findOneAndUpdate", hooks.setUpdateSettings);
 recipeSchema.post("findOneAndUpdate", hooks.handleSaveError);
 
-const Recipe = mongoose.model("recipe", recipeSchema);
+const Recipe = model("recipe", recipeSchema);
 
 export default Recipe;
