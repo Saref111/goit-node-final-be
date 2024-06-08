@@ -40,6 +40,11 @@ const userSchema = new Schema(
   { versionKey: false }
 );
 
+userSchema.methods.isPasswordValid = function (password) {
+  return this.password === password;
+};
+
+
 userSchema.post("save", hooks.handleSaveError);
 userSchema.pre("findOneAndUpdate", hooks.setUpdateSettings);
 userSchema.post("findOneAndUpdate", hooks.handleSaveError);

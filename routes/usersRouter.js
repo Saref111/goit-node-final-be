@@ -2,17 +2,25 @@ import { Router } from "express";
 import { authenticateToken, upload } from "../middlewares/index.js";
 import userController from "../controllers/usersController.js";
 import validateBody from "../helpers/validateBody.js";
-import { userRegistrationSchema } from "../schemas/userSchema.js";
+import usersController from "../controllers/usersController.js";
+import {
+  userRegistrationSchema,
+  userLoginSchema,
+} from "../schemas/userSchema.js";
 
 const usersRouter = Router();
 
 usersRouter.post(
   "/register",
   validateBody(userRegistrationSchema),
-  userController.register
+  usersController.register
 );
 
-usersRouter.get("/", userController.getAll);
+usersRouter.post(
+  "/login",
+  validateBody(userLoginSchema),
+  usersController.login
+);
 
 usersRouter.patch(
   "/avatars",
@@ -26,6 +34,12 @@ usersRouter.get(
   authenticateToken,
   userController.getFollowersById
 );
+
+usersRouter.get("/current", authenticateToken, usersController.getCurrentUser);
+
+usersRouter.get("/", usersController.getAll);
+
+usersRouter.get("/:id/followings", usersController.getFollowings);
 
 usersRouter.get("/followings", authenticateToken, userController.getFollowings);
 
