@@ -35,8 +35,8 @@ recipesRouter.post(
 
 recipesRouter.get("/favorite", recipesControllers.getFavorite);
 
-recipesRouter.post("/favorite/:id", recipesControllers.addToFavorite);
+recipesRouter.patch("/addFavorite/:id", recipesControllers.addFavorite);
 
-recipesRouter.delete("/favorite/:id", recipesControllers.deleteFromFavorite);
+recipesRouter.patch("/removeFavorite/:id", recipesControllers.removeFavorite);
 
 export default recipesRouter;
