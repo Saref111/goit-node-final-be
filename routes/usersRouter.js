@@ -55,4 +55,6 @@ usersRouter.patch(
   userController.removeFollowing
 );
 
+usersRouter.post('logout', authenticateToken, usersController.logout);
+
 export default usersRouter;

@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import createToken from "../helpers/createToken.js";
+import { log } from "console";
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -151,6 +152,12 @@ const removeFollowing = async (req, res) => {
   res.json(result.following);
 };
 
+const logout = async (req, res) => {
+  const { _id: userId } = req.user;
+  await userService.updateToken(userId, null);
+  res.status(204).send();
+}
+
 export default {
   register: ctrlWrapper(register),
   updateAvatar: ctrlWrapper(updateAvatar),
@@ -161,4 +168,5 @@ export default {
   getFollowings: ctrlWrapper(getFollowings),
   addFollowing: ctrlWrapper(addFollowing),
   removeFollowing: ctrlWrapper(removeFollowing),
+  logout: ctrlWrapper(logout),
 };
