@@ -25,14 +25,25 @@ const getQueryRecipes = async (req, res) => {
     ...(area && { area }),
     ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
   };
-  const result = await searchRecipes({ filter, settings }, true);
-  res.json(result);
+
+  const [results, totalDocuments] = await Promise.all([
+    searchRecipes({ filter, settings }),
+    countRecipes(filter),
+  ]);
+  const totalPages = Math.ceil(totalDocuments / limit);
+
+  res.json({
+    page,
+    limit,
+    totalPages,
+    results,
+  });
 };
 
 const getOneRecipe = async (req, res) => {
   const { id: _id } = req.params;
   const result = await getRecipe({ _id });
-  res.json({ result });
+  res.json(result);
 };
 
 const getOwnRecipes = async (req, res) => {

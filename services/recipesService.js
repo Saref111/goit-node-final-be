@@ -1,36 +1,16 @@
 import Recipe from "../models/Recipe.js";
-import countDocuments from "./countDocuments.js";
-
-export const searchRecipes = async ({ filter, settings }, withOwner) => {
-  const recipeQuery = withOwner
-    ? Recipe.find(filter, "title description thumb", settings).populate(
-        "owner",
-        "name avatar"
-      )
-    : Recipe.find(filter, "title description thumb", settings);
-
-  const countQuery = countDocuments(Recipe, { filter });
-
-  return Promise.all([recipeQuery, countQuery])
-    .then(([recipes, totalDocuments]) => {
-      const totalPages = Math.ceil(totalDocuments / settings.limit);
-      return {
-        page: settings.skip / settings.limit + 1,
-        limit: settings.limit,
-        totalPages,
-        results: recipes,
-      };
-    })
-    .catch((error) => {
-      console.error(error);
-      throw error;
-    });
-};
+export const searchRecipes = async ({ filter, settings }) =>
+  Recipe.find(filter, "title description thumb", settings).populate(
+    "owner",
+    "name avatar"
+  );
 
 export const getRecipe = (filter) => {
   return Recipe.findOne(filter)
     .populate("owner", "name avatar")
-    .populate("ingredients.id");
+    .populate("ingredients.id")
+    .populate("category")
+    .populate("area");
 };
 
 export const listRecipes = (search) => {

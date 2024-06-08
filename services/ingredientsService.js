@@ -1,4 +1,2 @@
-import Ingredients from "../models/Ingredients.js";
-
-export const getIngredients = () =>  Ingredients.find().sort({name: 1});
-
+import Ingredient from "../models/Ingredient.js";
+export const getIngredients = () => Ingredient.find().sort({ name: 1 });

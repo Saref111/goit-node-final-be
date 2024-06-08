@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const areasSchema = new Schema(
+const areaSchema = new Schema(
   {
     name: {
       type: String,
@@ -10,6 +10,6 @@ const areasSchema = new Schema(
   { versionKey: false }
 );
 
-const Areas = model("areas", areasSchema);
+const Area = model("area", areaSchema);
 
-export default Areas;
+export default Area;

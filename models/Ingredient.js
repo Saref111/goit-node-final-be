@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const ingredientsSchema = new Schema(
+const ingredientSchema = new Schema(
   {
     name: {
       type: String,
@@ -18,6 +18,6 @@ const ingredientsSchema = new Schema(
   { versionKey: false }
 );
 
-const Ingredients = model("ingredients", ingredientsSchema);
+const Ingredient = model("ingredient", ingredientSchema);
 
-export default Ingredients;
+export default Ingredient;

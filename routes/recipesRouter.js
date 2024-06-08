@@ -12,14 +12,13 @@ import { recipeCreateSchema } from "../schemas/recipeSchema.js";
 import validateBody from "../helpers/validateBody.js";
 import validateQuery from "../helpers/validateQuary.js";
 import { querySchema } from "../schemas/querySchema.js";
-
 const recipesRouter = Router();
 recipesRouter.get(
   "/",
   validateQuery(querySchema),
   recipesControllers.getQueryRecipes
 );
-recipesRouter.get("/:id", recipesControllers.getOneRecipe);
+recipesRouter.get("/details/:id", validateId, recipesControllers.getOneRecipe);
 recipesRouter.get("/popular", recipesControllers.getPopular);
 
 recipesRouter.use(authenticateToken);

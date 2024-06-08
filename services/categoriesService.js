@@ -1,5 +1,2 @@
-import Categories from "../models/Categories.js";
-
-export const getAllCategories = () => Categories.find().sort({name: 1});
-
-
+import Category from "../models/Category.js";
+export const getAllCategories = () => Category.find().sort({ name: 1 });
