@@ -4,6 +4,8 @@ import User from "../models/User.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import createToken from "../helpers/createToken.js";
+import Recipe from "../models/Recipe.js";
+
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -156,6 +158,42 @@ const logout = async (req, res) => {
   res.status(204).send();
 }
 
+const getInfo = async (req, res) => {
+  const { id } = req.params
+  const currentUserId = "64c8d958249fae54bae90bb9";
+  try {
+    const candidate = await User.findOne({ token: id })
+    if (candidate) {
+      const recipes = await Recipe.find({ owner: candidate._id })
+      if (candidate.token === id) {
+        res.status(200).json({
+          avatar: candidate.avatar,
+          name: candidate.name,
+          email: candidate.email,
+          recipes: recipes ? recipes : [],
+          followers: candidate.followers.length,
+          following: candidate.following.length
+        })
+      } else {
+        res.status(200).json({
+          avatar: candidate.avatar,
+          name: candidate.name,
+          email: candidate.email,
+          recipes: recipes ? recipes.length : 0,
+          following: candidate.following.length
+        })
+      }
+    } else {
+      throw new Error("User not found")
+    }
+  } catch (e) {
+    res.status(404).json({
+      message: e
+    })
+  }
+
+}
+
 export default {
   register: ctrlWrapper(register),
   updateAvatar: ctrlWrapper(updateAvatar),
@@ -167,4 +205,5 @@ export default {
   addFollowing: ctrlWrapper(addFollowing),
   removeFollowing: ctrlWrapper(removeFollowing),
   logout: ctrlWrapper(logout),
+  getInfo: ctrlWrapper(getInfo),
 };

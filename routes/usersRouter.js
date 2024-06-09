@@ -29,6 +29,8 @@ usersRouter.patch(
   userController.updateAvatar
 );
 
+usersRouter.get("/info", authenticateToken, userController.getInfo)
+
 usersRouter.get(
   "/:id/followers",
   authenticateToken,
