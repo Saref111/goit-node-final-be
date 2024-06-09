@@ -108,7 +108,7 @@ const deleteRecipe = async (req, res) => {
 };
 
 const getPopular = async (req, res) => {
-  const { page = 1, limit = 20 } = req.query;
+  const { page = 1, limit = 4 } = req.query;
   const skip = (page - 1) * limit;
   const popular = await getRecipes(skip, limit);
   res.json(popular);

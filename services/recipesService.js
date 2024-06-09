@@ -1,6 +1,6 @@
 import Recipe from "../models/Recipe.js";
 export const searchRecipes = async ({ filter, settings }) =>
-  Recipe.find(filter, "title description thumb", settings).populate(
+  Recipe.find(filter, "title description thumb favorite", settings).populate(
     "owner",
     "name avatar"
   );
@@ -47,11 +47,28 @@ export const getRecipes = (skip, limit) => {
       $limit: limit,
     },
     {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerDetails",
+      },
+    },
+    {
+      $unwind: "$ownerDetails",
+    },
+    {
       $project: {
         _id: 1,
         title: 1,
         description: 1,
         thumb: 1,
+        favorite: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          name: "$ownerDetails.name",
+          avatar: "$ownerDetails.avatar",
+        },
       },
     },
   ]);
