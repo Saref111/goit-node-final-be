@@ -1,11 +1,10 @@
 import fs from "fs/promises";
 import * as userService from "../services/usersService.js";
-import User from "../models/User.js";
+import * as recipeServices from "../services/recipesService.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import createToken from "../helpers/createToken.js";
-import Recipe from "../models/Recipe.js";
-
+import { uploadAvatar } from "../helpers/cloudinary.js";
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -57,6 +56,45 @@ const register = async (req, res) => {
   });
 };
 
+const getOwnInfo = async (req, res) => {
+  const { _id } = req.user;
+  const [user, recipes, favorites] = await Promise.all([
+    userService.findUserById(_id),
+    recipeServices.countRecipes({ owner: _id }),
+    recipeServices.countRecipes({ favorites: _id }),
+  ]);
+
+  const { name, email, avatar, followers, following } = user;
+
+  res.json({
+    name,
+    email,
+    avatar,
+    recipes,
+    favorites,
+    followers: followers.length,
+    following: following.length,
+  });
+};
+
+const getUserInfo = async (req, res) => {
+  const { id: _id } = req.params;
+  const [user, recipes] = await Promise.all([
+    userService.findUserById(_id),
+    recipeServices.countRecipes({ owner: _id }),
+  ]);
+
+  const { name, email, avatar, followers } = user;
+
+  res.json({
+    name,
+    email,
+    avatar,
+    recipes,
+    followers: followers.length,
+  });
+};
+
 const updateAvatar = async (req, res) => {
   if (!req.file) {
     throw HttpError(400, "Image not found");
@@ -73,11 +111,6 @@ const updateAvatar = async (req, res) => {
 
   const user = await userService.updateUser(_id, { avatar, avatar_preview });
   res.json({ avatar: user.avatar, avatar_preview: user.avatar_preview });
-};
-
-const getAll = async (req, res) => {
-  const result = await User.find();
-  res.json(result);
 };
 
 const getFollowersById = async (req, res) => {
@@ -156,54 +189,18 @@ const logout = async (req, res) => {
   const { _id: userId } = req.user;
   await userService.updateToken(userId, null);
   res.status(204).send();
-}
-
-const getInfo = async (req, res) => {
-  const { id } = req.params
-  const currentUserId = "64c8d958249fae54bae90bb9";
-  try {
-    const candidate = await User.findOne({ token: id })
-    if (candidate) {
-      const recipes = await Recipe.find({ owner: candidate._id })
-      if (candidate.token === id) {
-        res.status(200).json({
-          avatar: candidate.avatar,
-          name: candidate.name,
-          email: candidate.email,
-          recipes: recipes ? recipes : [],
-          followers: candidate.followers.length,
-          following: candidate.following.length
-        })
-      } else {
-        res.status(200).json({
-          avatar: candidate.avatar,
-          name: candidate.name,
-          email: candidate.email,
-          recipes: recipes ? recipes.length : 0,
-          following: candidate.following.length
-        })
-      }
-    } else {
-      throw new Error("User not found")
-    }
-  } catch (e) {
-    res.status(404).json({
-      message: e
-    })
-  }
-
-}
+};
 
 export default {
   register: ctrlWrapper(register),
-  updateAvatar: ctrlWrapper(updateAvatar),
   login: ctrlWrapper(login),
   getCurrentUser: ctrlWrapper(getCurrentUser),
-  getAll: ctrlWrapper(getAll),
+  getOwnInfo: ctrlWrapper(getOwnInfo),
+  getUserInfo: ctrlWrapper(getUserInfo),
+  updateAvatar: ctrlWrapper(updateAvatar),
   getFollowersById: ctrlWrapper(getFollowersById),
   getFollowings: ctrlWrapper(getFollowings),
   addFollowing: ctrlWrapper(addFollowing),
   removeFollowing: ctrlWrapper(removeFollowing),
   logout: ctrlWrapper(logout),
-  getInfo: ctrlWrapper(getInfo),
 };

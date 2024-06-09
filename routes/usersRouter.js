@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticateToken, upload } from "../middlewares/index.js";
+import { authenticateToken, upload, validateId } from "../middlewares/index.js";
 import userController from "../controllers/usersController.js";
 import validateBody from "../helpers/validateBody.js";
 import usersController from "../controllers/usersController.js";
@@ -22,6 +22,17 @@ usersRouter.post(
   usersController.login
 );
 
+usersRouter.get("/current", authenticateToken, usersController.getCurrentUser);
+
+usersRouter.get("/info", authenticateToken, userController.getOwnInfo);
+
+usersRouter.get(
+  "/info/:id",
+  authenticateToken,
+  validateId,
+  userController.getUserInfo
+);
+
 usersRouter.patch(
   "/avatars",
   authenticateToken,
@@ -29,17 +40,11 @@ usersRouter.patch(
   userController.updateAvatar
 );
 
-usersRouter.get("/info", authenticateToken, userController.getInfo)
-
 usersRouter.get(
   "/:id/followers",
   authenticateToken,
   userController.getFollowersById
 );
-
-usersRouter.get("/current", authenticateToken, usersController.getCurrentUser);
-
-usersRouter.get("/", usersController.getAll);
 
 usersRouter.get("/:id/followings", usersController.getFollowings);
 
@@ -57,6 +62,6 @@ usersRouter.patch(
   userController.removeFollowing
 );
 
-usersRouter.post('/logout', authenticateToken, usersController.logout);
+usersRouter.post("/logout", authenticateToken, usersController.logout);
 
 export default usersRouter;
