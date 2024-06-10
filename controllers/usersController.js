@@ -1,47 +1,16 @@
 import fs from "fs/promises";
 import * as userService from "../services/usersService.js";
 import * as recipeServices from "../services/recipesService.js";
-import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
-import createToken from "../helpers/createToken.js";
-import { uploadAvatar } from "../helpers/cloudinary.js";
-
-const login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await userService.findUserByEmail(email);
-  if (!user || !(await user.isPasswordValid(password))) {
-    throw HttpError(400, "Invalid credentials");
-  }
-  const token = createToken(user);
-  await userService.updateToken(user._id, token);
-  res.json({
-    user: {
-      name: user.name,
-      avatar: user.avatar || null,
-      favorites: user.favorites || [],
-    },
-    token,
-  });
-};
-
-const getCurrentUser = async (req, res) => {
-  const { user } = req;
-  const currentUser = await userService.findUserById(user._id);
-  res.json({
-    user: {
-      name: currentUser.name,
-      avatar: currentUser.avatar || null,
-      favorites: currentUser.favorites || [],
-    },
-  });
-};
+import HttpError from "../helpers/HttpError.js";
+import cloudinary from "../helpers/cloudinary.js";
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
-  const existingUser = await userService.findUserByEmail(email);
+  const existingUser = await userService.findUser({ email });
 
   if (existingUser) {
-    throw HttpError(400, "User already exists");
+    throw HttpError(409, "User already exists");
   }
 
   const user = await userService.createUser({ name, email, password });
@@ -49,22 +18,44 @@ const register = async (req, res) => {
   res.status(201).json({
     user: {
       name: user.name,
-      avatar: user.avatar || null,
-      favotires: user.favorites || [],
+      avatar_preview: user.avatar_preview,
+      following: user.following,
     },
     token: user.token,
   });
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await userService.findUser({ email });
+  if (!user || !(await user.isPasswordValid(password))) {
+    throw HttpError(401, "Email or password is wrong");
+  }
+
+  const { name, avatar_preview, following, token } =
+    await userService.updateToken(user._id);
+
+  res.json({
+    user: {
+      name,
+      avatar_preview,
+      following,
+    },
+    token,
+  });
+};
+
+const getCurrentUser = async (req, res) => {
+  const { name, avatar_preview, following } = req.user;
+  res.json({ name, avatar_preview, following });
+};
+
 const getOwnInfo = async (req, res) => {
-  const { _id } = req.user;
-  const [user, recipes, favorites] = await Promise.all([
-    userService.findUserById(_id),
+  const { _id, name, email, avatar, followers, following } = req.user;
+  const [recipes, favorites] = await Promise.all([
     recipeServices.countRecipes({ owner: _id }),
     recipeServices.countRecipes({ favorites: _id }),
   ]);
-
-  const { name, email, avatar, followers, following } = user;
 
   res.json({
     name,
@@ -83,6 +74,10 @@ const getUserInfo = async (req, res) => {
     userService.findUserById(_id),
     recipeServices.countRecipes({ owner: _id }),
   ]);
+
+  if (!user) {
+    throw HttpError(404, `User id ${_id} not found`);
+  }
 
   const { name, email, avatar, followers } = user;
 
@@ -106,88 +101,99 @@ const updateAvatar = async (req, res) => {
     await fs.unlink(path);
     throw HttpError(400, "Unsupported file type");
   }
-  const [avatar, avatar_preview] = await uploadAvatar(path);
+  const [avatar, avatar_preview] = await cloudinary.uploadAvatar(path);
   await fs.unlink(path);
 
   const user = await userService.updateUser(_id, { avatar, avatar_preview });
   res.json({ avatar: user.avatar, avatar_preview: user.avatar_preview });
 };
 
-const getFollowersById = async (req, res) => {
-  const { id } = req.params;
-  const user = await User.findById(id);
-  if (!user) {
-    throw HttpError(404, `User with id=${id} not found`);
-  }
-  const result = user.followers;
+const getOwnFollowers = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
+  const { _id } = req.user;
+
+  const result = await userService.getUsers(
+    _id,
+    "followers",
+    Number(page),
+    Number(limit)
+  );
+
   res.json(result);
 };
 
-const getFollowings = async (req, res) => {
-  const { _id: userId } = req.user;
-  const { following } = await User.findById(userId);
-  res.json(following);
+const getFollowers = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
+  const { id } = req.params;
+  const user = await userService.findUserById(id);
+  if (!user) {
+    throw HttpError(404, `User id ${id} not found`);
+  }
+
+  const result = await userService.getUsers(
+    user._id,
+    "followers",
+    Number(page),
+    Number(limit)
+  );
+
+  res.json(result);
+};
+
+const getOwnFollowings = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
+  const { _id } = req.user;
+
+  const result = await userService.getUsers(
+    _id,
+    "following",
+    Number(page),
+    Number(limit)
+  );
+
+  res.json(result);
 };
 
 const addFollowing = async (req, res) => {
   const { id } = req.params;
-  const { _id: currentUserId } = req.user;
-
-  const followedUser = await User.findById(id);
-  if (!followedUser) {
-    throw HttpError(404, `User with id=${id} not found`);
+  const { _id, following } = req.user;
+  if (id === _id.toString()) {
+    throw HttpError(409, "Can't follow yourself");
+  }
+  if (following.includes(id)) {
+    throw HttpError(409, `User id ${id} is already followed`);
+  }
+  const isUser = await userService.findUserById(id);
+  if (!isUser) {
+    throw HttpError(404, `User id ${id} not found`);
   }
 
-  const result = await User.findByIdAndUpdate(
-    currentUserId,
-    { $addToSet: { following: id } },
-    {
-      new: true,
-    }
-  );
+  const [newUser] = await Promise.all([
+    userService.updateUser(_id, { $addToSet: { following: id } }),
+    userService.updateUser(id, { $addToSet: { followers: _id } }),
+  ]);
 
-  const followedUserUpdate = await User.findByIdAndUpdate(
-    id,
-    { $addToSet: { followers: currentUserId } },
-    {
-      new: true,
-    }
-  );
-
-  res.json(result.following);
+  res.json({ following: newUser.following });
 };
 
 const removeFollowing = async (req, res) => {
   const { id } = req.params;
-  const { _id: currentUserId } = req.user;
-
-  const followedUser = await User.findById(id);
-  if (!followedUser) {
-    throw HttpError(404, `User with id=${id} not found`);
+  const { _id, following } = req.user;
+  if (!following.includes(id)) {
+    throw HttpError(400, `User id ${id} is not followed`);
   }
 
-  const result = await User.findByIdAndUpdate(
-    currentUserId,
-    { $pull: { following: id } },
-    {
-      new: true,
-    }
-  );
+  const [newUser] = await Promise.all([
+    userService.updateUser(_id, { $pull: { following: id } }),
+    userService.updateUser(id, { $pull: { followers: _id } }),
+  ]);
 
-  const followedUserUpdate = await User.findByIdAndUpdate(
-    id,
-    { $pull: { followers: currentUserId } },
-    {
-      new: true,
-    }
-  );
-
-  res.json(result.following);
+  res.json({ following: newUser.following });
 };
 
 const logout = async (req, res) => {
-  const { _id: userId } = req.user;
-  await userService.updateToken(userId, null);
+  const { _id } = req.user;
+  await userService.updateUser(_id, { token: null });
   res.status(204).send();
 };
 
@@ -198,8 +204,9 @@ export default {
   getOwnInfo: ctrlWrapper(getOwnInfo),
   getUserInfo: ctrlWrapper(getUserInfo),
   updateAvatar: ctrlWrapper(updateAvatar),
-  getFollowersById: ctrlWrapper(getFollowersById),
-  getFollowings: ctrlWrapper(getFollowings),
+  getOwnFollowers: ctrlWrapper(getOwnFollowers),
+  getFollowers: ctrlWrapper(getFollowers),
+  getOwnFollowings: ctrlWrapper(getOwnFollowings),
   addFollowing: ctrlWrapper(addFollowing),
   removeFollowing: ctrlWrapper(removeFollowing),
   logout: ctrlWrapper(logout),

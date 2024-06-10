@@ -7,10 +7,16 @@ const isValidObjectId = (value, helpers) => {
   }
   return value;
 };
+
 export const querySchema = Joi.object({
   limit: Joi.number().min(1),
   page: Joi.number().min(1),
   category: Joi.string().custom(isValidObjectId, "ObjectId validation"),
   area: Joi.string().custom(isValidObjectId, "ObjectId validation"),
   ingredient: Joi.string().custom(isValidObjectId, "ObjectId validation"),
+});
+
+export const paginationSchema = Joi.object({
+  limit: Joi.number().min(1),
+  page: Joi.number().min(1),
 });

@@ -9,7 +9,7 @@ cloudinary.config({
   api_secret: CLOUDINARY_API_SECRET,
 });
 
-export const uploadAvatar = async (image) => {
+const uploadAvatar = async (image) => {
   const {
     eager: [normal, preview],
   } = await cloudinary.uploader.upload(image, {
@@ -28,7 +28,7 @@ export const uploadAvatar = async (image) => {
   return [normal.secure_url, preview.secure_url];
 };
 
-export const uploadRecipe = async (image) => {
+const uploadRecipe = async (image) => {
   const {
     eager: [normal, preview],
   } = await cloudinary.uploader.upload(image, {
@@ -46,3 +46,5 @@ export const uploadRecipe = async (image) => {
 
   return [normal.secure_url, preview.secure_url];
 };
+
+export default { uploadAvatar, uploadRecipe };
