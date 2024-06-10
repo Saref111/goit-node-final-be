@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { authenticateToken, upload, validateId } from "../middlewares/index.js";
-import userController from "../controllers/usersController.js";
-import validateBody from "../helpers/validateBody.js";
-import usersController from "../controllers/usersController.js";
 import {
   userRegistrationSchema,
   userLoginSchema,
 } from "../schemas/userSchema.js";
+import { paginationSchema } from "../schemas/querySchema.js";
+import validateBody from "../helpers/validateBody.js";
+import validateQuery from "../helpers/validateQuery.js";
+import usersController from "../controllers/usersController.js";
 
 const usersRouter = Router();
 
@@ -22,46 +23,51 @@ usersRouter.post(
   usersController.login
 );
 
-usersRouter.get("/current", authenticateToken, usersController.getCurrentUser);
+usersRouter.use(authenticateToken);
 
-usersRouter.get("/info", authenticateToken, userController.getOwnInfo);
+usersRouter.get("/current", usersController.getCurrentUser);
 
-usersRouter.get(
-  "/info/:id",
-  authenticateToken,
-  validateId,
-  userController.getUserInfo
-);
+usersRouter.get("/info", usersController.getOwnInfo);
+
+usersRouter.get("/info/:id", validateId, usersController.getUserInfo);
 
 usersRouter.patch(
   "/avatars",
-  authenticateToken,
   upload.single("avatar"),
-  userController.updateAvatar
+  usersController.updateAvatar
 );
 
 usersRouter.get(
-  "/:id/followers",
-  authenticateToken,
-  userController.getFollowersById
+  "/followers",
+  validateQuery(paginationSchema),
+  usersController.getOwnFollowers
 );
 
-usersRouter.get("/:id/followings", usersController.getFollowings);
+usersRouter.get(
+  "/followers/:id",
+  validateId,
+  validateQuery(paginationSchema),
+  usersController.getFollowers
+);
 
-usersRouter.get("/followings", authenticateToken, userController.getFollowings);
+usersRouter.get(
+  "/following",
+  validateQuery(paginationSchema),
+  usersController.getOwnFollowings
+);
 
 usersRouter.patch(
   "/addFollowing/:id",
-  authenticateToken,
-  userController.addFollowing
+  validateId,
+  usersController.addFollowing
 );
 
 usersRouter.patch(
   "/removeFollowing/:id",
-  authenticateToken,
-  userController.removeFollowing
+  validateId,
+  usersController.removeFollowing
 );
 
-usersRouter.post("/logout", authenticateToken, usersController.logout);
+usersRouter.post("/logout", usersController.logout);
 
 export default usersRouter;

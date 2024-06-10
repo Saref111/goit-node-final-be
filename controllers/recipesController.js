@@ -2,7 +2,7 @@ import fs from "fs/promises";
 
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import HttpError from "../helpers/HttpError.js";
-import { uploadRecipe } from "../helpers/cloudinary.js";
+import cloudinary from "../helpers/cloudinary.js";
 
 import {
   getRecipes,
@@ -82,7 +82,7 @@ const createRecipe = async (req, res) => {
     await fs.unlink(path);
     throw HttpError(400, "Unsupported file type");
   }
-  const [thumb, preview] = await uploadRecipe(path);
+  const [thumb, preview] = await cloudinary.uploadRecipe(path);
   await fs.unlink(path);
 
   const newRecipe = await addRecipe({

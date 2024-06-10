@@ -24,16 +24,18 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    preview: {
+    avatar_preview: {
       type: String,
       default: null,
     },
     followers: {
-      type: Array,
+      type: [Schema.Types.ObjectId],
+      ref: "user",
       default: [],
     },
     following: {
-      type: Array,
+      type: [Schema.Types.ObjectId],
+      ref: "user",
       default: [],
     },
   },
@@ -43,7 +45,6 @@ const userSchema = new Schema(
 userSchema.methods.isPasswordValid = function (password) {
   return this.password === password;
 };
-
 
 userSchema.post("save", hooks.handleSaveError);
 userSchema.pre("findOneAndUpdate", hooks.setUpdateSettings);

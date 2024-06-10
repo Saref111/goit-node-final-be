@@ -1,14 +1,14 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
-import usersRouter from "./routes/usersRouter.js";
+import dotenv from "dotenv";
 import "./config/passport-config.js";
+import usersRouter from "./routes/usersRouter.js";
+import recipesRouter from "./routes/recipesRouter.js";
 import categoriesRouter from "./routes/categoriesRouter.js";
 import areasRouter from "./routes/areasRouter.js";
 import ingredientsRouter from "./routes/ingredientsRouter.js";
-import recipesRouter from "./routes/recipesRouter.js";
 import testimonialsRouter from "./routes/testimonialsRouter.js";
 
 dotenv.config();
@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
 
 const main = async () => {
   try {
-    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(uri);
     console.log("Database connection successful");
   } catch (error) {
     console.log(error);

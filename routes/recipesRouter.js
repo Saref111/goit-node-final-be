@@ -10,7 +10,7 @@ import {
 
 import { recipeCreateSchema } from "../schemas/recipeSchema.js";
 import validateBody from "../helpers/validateBody.js";
-import validateQuery from "../helpers/validateQuary.js";
+import validateQuery from "../helpers/validateQuery.js";
 import { querySchema } from "../schemas/querySchema.js";
 const recipesRouter = Router();
 recipesRouter.get(
