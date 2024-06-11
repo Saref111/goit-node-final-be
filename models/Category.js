@@ -6,6 +6,10 @@ const categorySchema = new Schema(
       type: String,
       required: [true, "Name is required"],
     },
+    thumb: {
+      type: String,
+      required: [true, "Thumb is required"],
+    },
   },
   { versionKey: false }
 );
