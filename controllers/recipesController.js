@@ -104,7 +104,7 @@ const deleteRecipe = async (req, res) => {
     throw HttpError(404);
   }
 
-  res.json(result);
+  res.json({ message: "Deleted successfully" });
 };
 
 const getPopular = async (req, res) => {

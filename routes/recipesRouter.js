@@ -11,8 +11,10 @@ import {
 import { recipeCreateSchema } from "../schemas/recipeSchema.js";
 import validateBody from "../helpers/validateBody.js";
 import validateQuery from "../helpers/validateQuery.js";
-import { querySchema } from "../schemas/querySchema.js";
+import { querySchema, paginationSchema } from "../schemas/querySchema.js";
+
 const recipesRouter = Router();
+
 recipesRouter.get(
   "/",
   validateQuery(querySchema),
@@ -23,9 +25,18 @@ recipesRouter.get("/popular", recipesControllers.getPopular);
 
 recipesRouter.use(authenticateToken);
 
-recipesRouter.get("/own", recipesControllers.getOwnRecipes);
+recipesRouter.get(
+  "/own",
+  validateQuery(paginationSchema),
+  recipesControllers.getOwnRecipes
+);
 
-recipesRouter.get("/own/:id", validateId, recipesControllers.getOwnRecipes);
+recipesRouter.get(
+  "/own/:id",
+  validateId,
+  validateQuery(paginationSchema),
+  recipesControllers.getOwnRecipes
+);
 
 recipesRouter.post(
   "/own",
