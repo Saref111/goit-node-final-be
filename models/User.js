@@ -24,10 +24,6 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    avatar_preview: {
-      type: String,
-      default: null,
-    },
     followers: {
       type: [Schema.Types.ObjectId],
       ref: "user",
