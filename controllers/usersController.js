@@ -17,8 +17,9 @@ const register = async (req, res) => {
 
   res.status(201).json({
     user: {
+      id: user._id,
       name: user.name,
-      avatar_preview: user.avatar_preview,
+      avatar: user.avatar,
       following: user.following,
     },
     token: user.token,
@@ -32,13 +33,15 @@ const login = async (req, res) => {
     throw HttpError(401, "Email or password is wrong");
   }
 
-  const { name, avatar_preview, following, token } =
-    await userService.updateToken(user._id);
+  const { _id, name, avatar, following, token } = await userService.updateToken(
+    user._id
+  );
 
   res.json({
     user: {
+      id: _id,
       name,
-      avatar_preview,
+      avatar,
       following,
     },
     token,
@@ -46,8 +49,8 @@ const login = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  const { name, avatar_preview, following } = req.user;
-  res.json({ name, avatar_preview, following });
+  const { _id, name, avatar, following } = req.user;
+  res.json({ id: _id, name, avatar, following });
 };
 
 const getOwnInfo = async (req, res) => {
@@ -180,7 +183,7 @@ const removeFollowing = async (req, res) => {
   const { id } = req.params;
   const { _id, following } = req.user;
   if (!following.includes(id)) {
-    throw HttpError(400, `User id ${id} is not followed`);
+    throw HttpError(404, `User id ${id} is not followed`);
   }
 
   const [newUser] = await Promise.all([

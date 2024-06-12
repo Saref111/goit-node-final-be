@@ -55,14 +55,14 @@ export const getUsers = (id, field, page, limit) =>
         _id: 0,
         id: "$userData._id",
         name: "$userData.name",
-        avatar_preview: "$userData.avatar_preview",
+        avatar: "$userData.avatar",
         recipes: {
           $map: {
             input: { $slice: ["$recipesData", 4] },
             as: "recipe",
             in: {
               id: "$$recipe._id",
-              preview: "$$recipe.preview",
+              thumb: "$$recipe.thumb",
             },
           },
         },
