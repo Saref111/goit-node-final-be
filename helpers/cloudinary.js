@@ -10,41 +10,31 @@ cloudinary.config({
 });
 
 const uploadAvatar = async (image) => {
-  const {
-    eager: [normal, preview],
-  } = await cloudinary.uploader.upload(image, {
+  const { public_id } = await cloudinary.uploader.upload(image, {
     resource_type: "image",
     folder: "avatars",
+    format: "jpg",
     width: 240,
     height: 240,
     crop: "fill",
     gravity: "face",
-    eager: [
-      { fetch_format: "auto", format: "" },
-      { width: 100, height: 100, fetch_format: "auto", format: "" },
-    ],
   });
 
-  return [normal.secure_url, preview.secure_url];
+  return public_id;
 };
 
 const uploadRecipe = async (image) => {
-  const {
-    eager: [normal, preview],
-  } = await cloudinary.uploader.upload(image, {
+  const { public_id } = await cloudinary.uploader.upload(image, {
     resource_type: "image",
     folder: "recipes",
+    format: "jpg",
     width: 700,
     height: 700,
     crop: "fill",
     gravity: "auto",
-    eager: [
-      { fetch_format: "auto", format: "" },
-      { width: 200, height: 200, fetch_format: "auto", format: "" },
-    ],
   });
 
-  return [normal.secure_url, preview.secure_url];
+  return public_id;
 };
 
 export default { uploadAvatar, uploadRecipe };
