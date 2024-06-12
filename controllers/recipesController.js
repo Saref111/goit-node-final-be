@@ -43,6 +43,9 @@ const getQueryRecipes = async (req, res) => {
 const getOneRecipe = async (req, res) => {
   const { id: _id } = req.params;
   const result = await getRecipe({ _id });
+  if (!result) {
+    throw HttpError(404, `Recipe id ${_id} not found`);
+  }
   res.json(result);
 };
 
