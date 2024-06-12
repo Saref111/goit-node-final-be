@@ -51,16 +51,12 @@ const recipeSchema = Schema(
       type: String,
       required: [true, "Thumb is required"],
     },
-    preview: {
-      type: String,
-      required: [true, "Preview is required"],
-    },
     favorite: {
       type: Array,
       default: [],
     },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 );
 
 recipeSchema.post("save", hooks.handleSaveError);
