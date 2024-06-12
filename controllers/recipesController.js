@@ -82,14 +82,13 @@ const createRecipe = async (req, res) => {
     await fs.unlink(path);
     throw HttpError(400, "Unsupported file type");
   }
-  const [thumb, preview] = await cloudinary.uploadRecipe(path);
+  const thumb = await cloudinary.uploadRecipe(path);
   await fs.unlink(path);
 
   const newRecipe = await addRecipe({
     ...req.body,
     owner,
     thumb,
-    preview,
   });
 
   res.json(newRecipe);
