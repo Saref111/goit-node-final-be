@@ -9,7 +9,7 @@ export const getRecipe = (filter) => {
   return Recipe.findOne(filter)
     .populate("owner", "name avatar")
     .populate("ingredients.id")
-    .populate("category")
+    .populate("category", "-thumb -description")
     .populate("area");
 };
 
