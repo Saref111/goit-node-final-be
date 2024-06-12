@@ -101,11 +101,11 @@ const updateAvatar = async (req, res) => {
     await fs.unlink(path);
     throw HttpError(400, "Unsupported file type");
   }
-  const [avatar, avatar_preview] = await cloudinary.uploadAvatar(path);
+  const avatar = await cloudinary.uploadAvatar(path);
   await fs.unlink(path);
 
-  const user = await userService.updateUser(_id, { avatar, avatar_preview });
-  res.json({ avatar: user.avatar, avatar_preview: user.avatar_preview });
+  const user = await userService.updateUser(_id, { avatar });
+  res.json({ avatar: user.avatar });
 };
 
 const getOwnFollowers = async (req, res) => {
