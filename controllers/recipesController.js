@@ -110,9 +110,7 @@ const deleteRecipe = async (req, res) => {
 };
 
 const getPopular = async (req, res) => {
-  const { page = 1, limit = 4 } = req.query;
-  const skip = (page - 1) * limit;
-  const popular = await getRecipes(skip, limit);
+  const popular = await getRecipes();
   res.json(popular);
 };
 
@@ -122,8 +120,20 @@ const getFavorite = async (req, res) => {
   const { page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
   const settings = { skip, limit };
-  const favorites = await listRecipes({ filter, settings });
-  res.json(favorites);
+
+  const [results, total] = await Promise.all([
+    listRecipes({ filter, settings }),
+    countRecipes(filter),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({
+    page,
+    limit,
+    totalPages,
+    results,
+  });
 };
 
 const addFavorite = async (req, res) => {
