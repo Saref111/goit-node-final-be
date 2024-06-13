@@ -24,7 +24,7 @@ export const removeRecipe = (filter) => Recipe.findOneAndDelete(filter);
 
 export const addRecipe = (data) => Recipe.create(data);
 
-export const getRecipes = (skip, limit) => {
+export const getRecipes = () => {
   return Recipe.aggregate([
     {
       $addFields: {
@@ -41,10 +41,7 @@ export const getRecipes = (skip, limit) => {
       $sort: { favoriteLength: -1 },
     },
     {
-      $skip: skip,
-    },
-    {
-      $limit: limit,
+      $limit: 4,
     },
     {
       $lookup: {
