@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import hooks from "./hooks.js";
+import bcrypt from 'bcrypt';
 
 const userSchema = new Schema(
   {
@@ -39,7 +40,7 @@ const userSchema = new Schema(
 );
 
 userSchema.methods.isPasswordValid = function (password) {
-  return this.password === password;
+  return bcrypt.compare(password, this.password);   
 };
 
 userSchema.post("save", hooks.handleSaveError);

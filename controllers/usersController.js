@@ -49,7 +49,8 @@ const login = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  const { _id, name, avatar, following } = req.user;
+  const { _id } = req.user;
+  const { name, avatar, following } = await userService.findUserById(_id);
   res.json({ id: _id, name, avatar, following });
 };
 
