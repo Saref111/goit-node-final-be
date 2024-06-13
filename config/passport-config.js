@@ -1,5 +1,6 @@
 import passport from "passport";
 import passportJWT from "passport-jwt";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/User.js";
 
@@ -24,6 +25,15 @@ passport.use(
       }
 
       const tokenFromHeader = params.jwtFromRequest(req);
+      try {
+        jwt.verify(tokenFromHeader, secret);
+      } catch (err) {
+        if (err.name === "TokenExpiredError") {
+          return done(new Error("Token has expired"), false);
+        }
+        return done(new Error("Token is invalid"), false);
+      }
+      
       if (user.token !== tokenFromHeader) {
         return done(new Error("Token does not match"), false);
       }
