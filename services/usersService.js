@@ -1,8 +1,10 @@
 import User from "../models/User.js";
 import createToken from "../helpers/createToken.js";
+import bcrypt from 'bcrypt';
 
 export const createUser = async (user) => {
-  const newUser = new User({ ...user });
+  const hashPassword = await bcrypt.hash(user.password, 10);
+  const newUser = new User({ ...user, password: hashPassword });
   await newUser.save();
 
   const token = createToken(newUser._id);
