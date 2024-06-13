@@ -51,6 +51,11 @@ const recipeSchema = Schema(
       type: String,
       required: [true, "Thumb is required"],
     },
+    time: {
+      type: Number,
+      min: 1,
+      require: [true, "Thumb is required"],
+    },
     favorite: {
       type: Array,
       default: [],
