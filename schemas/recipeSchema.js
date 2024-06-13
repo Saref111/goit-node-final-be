@@ -15,6 +15,7 @@ export const recipeCreateSchema = Joi.object({
       measure: Joi.string().required(),
     })
   ),
+  time: Joi.number().required().min(1),
   instructions: Joi.string().required(),
   description: Joi.string().required(),
 }).messages({
