@@ -50,8 +50,8 @@ const login = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   const { _id } = req.user;
-  const {name, avatar, following, token} = await userService.findUserById(_id)
-  res.json({ user: {id: _id, name, avatar, following}, token });
+  const { name, avatar, following } = await userService.findUserById(_id);
+  res.json({ id: _id, name, avatar, following });
 };
 
 const getOwnInfo = async (req, res) => {
