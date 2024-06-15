@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import createToken from "../helpers/createToken.js";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export const createUser = async (user) => {
   const hashPassword = await bcrypt.hash(user.password, 10);
@@ -65,6 +65,7 @@ export const getUsers = (id, field, page, limit) =>
             in: {
               id: "$$recipe._id",
               thumb: "$$recipe.thumb",
+              title: "$$recipe.title",
             },
           },
         },
