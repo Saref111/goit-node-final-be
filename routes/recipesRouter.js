@@ -1,17 +1,15 @@
 import { Router } from "express";
-import recipesControllers from "../controllers/recipesController.js";
-
 import {
   authenticateToken,
   upload,
   isEmptyBody,
   validateId,
 } from "../middlewares/index.js";
-
 import { recipeCreateSchema } from "../schemas/recipeSchema.js";
+import { querySchema, paginationSchema } from "../schemas/querySchema.js";
 import validateBody from "../helpers/validateBody.js";
 import validateQuery from "../helpers/validateQuery.js";
-import { querySchema, paginationSchema } from "../schemas/querySchema.js";
+import recipesControllers from "../controllers/recipesController.js";
 
 const recipesRouter = Router();
 
@@ -20,7 +18,9 @@ recipesRouter.get(
   validateQuery(querySchema),
   recipesControllers.getQueryRecipes
 );
+
 recipesRouter.get("/details/:id", validateId, recipesControllers.getOneRecipe);
+
 recipesRouter.get("/popular", recipesControllers.getPopular);
 
 recipesRouter.use(authenticateToken);
