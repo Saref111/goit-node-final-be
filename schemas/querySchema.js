@@ -6,7 +6,9 @@ export const querySchema = Joi.object({
   page: Joi.number().min(1),
   category: Joi.string().custom(isValidObjectId, "ObjectId validation"),
   area: Joi.string().custom(isValidObjectId, "ObjectId validation"),
-  ingredient: Joi.string().custom(isValidObjectId, "ObjectId validation"),
+  ingredients: Joi.array().items(
+    Joi.string().custom(isValidObjectId, "ObjectId validation")
+  ),
 }).messages({
   "any.invalid": '"{#label}" with value "{#value}" is not a valid ObjectId',
 });

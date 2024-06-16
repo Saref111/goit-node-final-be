@@ -17,13 +17,13 @@ import {
 } from "../services/recipesService.js";
 
 const getQueryRecipes = async (req, res) => {
-  const { page = 1, limit = 5, category, area, ingredient } = req.query;
+  const { page = 1, limit = 5, category, area, ingredients } = req.query;
   const skip = (page - 1) * limit;
   const settings = { skip, limit };
   const filter = {
     ...(category && { category }),
     ...(area && { area }),
-    ...(ingredient && { ["ingredients.id"]: { $in: [ingredient] } }),
+    ...(ingredients && { ["ingredients.id"]: { $all: ingredients } }),
   };
 
   const [results, totalDocuments] = await Promise.all([
