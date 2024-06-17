@@ -68,7 +68,7 @@ const getOwnInfo = async (req, res) => {
     recipes,
     favorites,
     followers: followers.length,
-    following: following.length,
+    following,
   });
 };
 
