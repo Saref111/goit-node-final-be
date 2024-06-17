@@ -58,7 +58,7 @@ const getOwnInfo = async (req, res) => {
   const { _id, name, email, avatar, followers, following } = req.user;
   const [recipes, favorites] = await Promise.all([
     recipeServices.countRecipes({ owner: _id }),
-    recipeServices.countRecipes({ favorites: _id }),
+    recipeServices.countRecipes({ favorite: _id }),
   ]);
 
   res.json({
