@@ -20,6 +20,7 @@ const register = async (req, res) => {
       id: user._id,
       name: user.name,
       avatar: user.avatar,
+      following: user.following,
     },
     token: user.token,
   });
@@ -41,6 +42,7 @@ const login = async (req, res) => {
       id: _id,
       name,
       avatar,
+      following,
     },
     token,
   });
@@ -49,7 +51,7 @@ const login = async (req, res) => {
 const getCurrentUser = async (req, res) => {
   const { _id } = req.user;
   const { name, avatar, following } = await userService.findUserById(_id);
-  res.json({ id: _id, name, avatar });
+  res.json({ id: _id, name, avatar, following });
 };
 
 const getOwnInfo = async (req, res) => {
