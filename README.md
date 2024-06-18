@@ -148,7 +148,7 @@ The server will be available at `http://localhost:3000`.
 
 ## License
 
-This project is licensed under the ISC License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the ISC License. See the [LICENSE](./LICENSE) file for details.
 
 ## Contact
 
